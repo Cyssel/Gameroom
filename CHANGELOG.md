@@ -4,8 +4,9 @@ All notable changes to Gameroom. Gameroom is based on Playnite 10.63.
 
 ## 1.5.1
 
-- **Games you play are added right away.** A game started from anywhere is recognized while it runs and added to the library, with a card over the game: *Added to your library*. Before, it waited in the notifications, where it went unnoticed. This applies to games with a recognizable engine or Steam files, and removed games aren't added again.
-- Games added while running get their icon, platform, and a cover from Steam or IGDB.
+- **Games opened outside of stores are now detected correctly.** Portable games, and games opened from their folder or a shortcut, are recognized while they run and added to the library right away, keeping the playtime of that session. Before, they only showed up in the notifications, where they were easy to miss.
+- This works with games made with Unity, Unreal, Godot, GameMaker, Ren'Py and RPG Maker, and with games that have Steam files. Removed games aren't added again.
+- Games added this way get their icon, platform, and a cover from Steam or IGDB.
 - Fix: achievement icons of recent Steam games, which moved to a new Steam server.
 
 ## 1.5.0 — First public release
