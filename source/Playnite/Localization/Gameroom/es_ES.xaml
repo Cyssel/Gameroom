@@ -76,6 +76,7 @@ Antes se hará una copia de tus partidas actuales.</sys:String>
     <sys:String x:Key="LOCGameroomSessionSourceLaunched">Iniciado desde Gameroom</sys:String>
     <sys:String x:Key="LOCGameroomSessionSourceDetected">Detectado</sys:String>
     <sys:String x:Key="LOCGameroomSessionsTotal">{0} sesiones, {1} en total</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsTotalOne">{0} sesión, {1} en total</sys:String>
     <sys:String x:Key="LOCGameroomSessionsEmpty">Aún no hay sesiones registradas.</sys:String>
 
     <!-- Estadísticas de juego -->

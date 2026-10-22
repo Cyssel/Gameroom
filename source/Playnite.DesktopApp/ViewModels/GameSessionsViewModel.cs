@@ -35,7 +35,8 @@ namespace Playnite.DesktopApp.ViewModels
             this.game = game;
             Sessions = service.Database.GetSessions(game.Id).Select(a => new GameSessionItem { Session = a }).ToList();
             var total = (ulong)Sessions.Sum(a => (long)a.Session.Duration);
-            Summary = string.Format(ResourceProvider.GetString("LOCGameroomSessionsTotal"), Sessions.Count, GameroomService.FormatDuration(total));
+            Summary = string.Format(ResourceProvider.GetString(Sessions.Count == 1 ? "LOCGameroomSessionsTotalOne" : "LOCGameroomSessionsTotal"),
+                Sessions.Count, GameroomService.FormatDuration(total));
         }
 
         public void OpenView()

@@ -21,6 +21,11 @@ namespace Playnite
         public const string OpenView = "open";
         public const string Achievements = "achievements";
         public const string GamePage = "game";
+        public const string Sessions = "sessions";
+        public const string Saves = "saves";
+        public const string PlayStatistics = "playstats";
+        public const string Settings = "settings";
+        public const string AchievementPreview = "achievementpreview";
     }
 
     public class PlayniteUriHandler : IUriHandlerAPI

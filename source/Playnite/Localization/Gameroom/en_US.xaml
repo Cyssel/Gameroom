@@ -78,6 +78,7 @@ Your current saves will be backed up first.</sys:String>
     <sys:String x:Key="LOCGameroomSessionSourceLaunched">Launched from Gameroom</sys:String>
     <sys:String x:Key="LOCGameroomSessionSourceDetected">Detected</sys:String>
     <sys:String x:Key="LOCGameroomSessionsTotal">{0} sessions, {1} in total</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsTotalOne">{0} session, {1} in total</sys:String>
     <sys:String x:Key="LOCGameroomSessionsEmpty">No sessions recorded yet.</sys:String>
 
     <!-- Play statistics -->

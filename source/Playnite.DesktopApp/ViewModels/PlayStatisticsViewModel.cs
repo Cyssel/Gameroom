@@ -153,9 +153,9 @@ namespace Playnite.DesktopApp.ViewModels
                 Height = bucket.Seconds / axisMax * ChartHeight,
                 // Label the most recent bar and every n-th one before it.
                 Label = (result.Buckets.Count - 1 - index) % labelStep == 0
-                    ? GetBarLabel(bucket, result.Grouping, result.Buckets.Count, multipleYears, culture)
+                    ? GetBarLabel(bucket, result.Grouping, result.Buckets.Count, multipleYears, GameroomLocalization.Culture)
                     : string.Empty,
-                ToolTip = $"{GetBarTitle(bucket, result.Grouping, culture)}: {FormatDuration(bucket.Seconds)}"
+                ToolTip = $"{GetBarTitle(bucket, result.Grouping, GameroomLocalization.Culture)}: {FormatDuration(bucket.Seconds)}"
             }).ToList();
 
             var topSeconds = result.TopGames.Count > 0 ? result.TopGames[0].Seconds : 0;

@@ -1277,6 +1277,45 @@ namespace Playnite.DesktopApp.ViewModels
 
                     break;
 
+                // gameroom://playnite/sessions/<game id>
+                case UriCommands.Sessions:
+                    if (arguments.Length > 1 && Guid.TryParse(arguments[1], out var sessionsGameId) &&
+                        Database.Games[sessionsGameId] is Game sessionsGame && Gameroom.GameroomService.Instance != null)
+                    {
+                        RestoreWindow();
+                        new GameSessionsViewModel(new GameSessionsWindowFactory(), Gameroom.GameroomService.Instance, sessionsGame).OpenView();
+                    }
+
+                    break;
+
+                // gameroom://playnite/saves/<game id>
+                case UriCommands.Saves:
+                    if (arguments.Length > 1 && Guid.TryParse(arguments[1], out var savesGameId) &&
+                        Database.Games[savesGameId] is Game savesGame && Gameroom.GameroomService.Instance != null)
+                    {
+                        RestoreWindow();
+                        new GameSavesViewModel(new GameSavesWindowFactory(), Dialogs, Gameroom.GameroomService.Instance, savesGame).OpenView();
+                    }
+
+                    break;
+
+                // gameroom://playnite/playstats
+                case UriCommands.PlayStatistics:
+                    RestoreWindow();
+                    PlayStatisticsViewModel.Open();
+                    break;
+
+                // gameroom://playnite/achievementpreview, the same popup as "Test popup" in the settings
+                case UriCommands.AchievementPreview:
+                    Gameroom.GameroomService.Instance?.ShowTestAchievement();
+                    break;
+
+                // gameroom://playnite/settings[/gameroom]
+                case UriCommands.Settings:
+                    RestoreWindow();
+                    OpenSettings(arguments.Length > 1 && Enum.TryParse<DesktopSettingsPage>(arguments[1], true, out var page) ? (int)page : 0);
+                    break;
+
                 default:
                     Logger.Warn($"Uknown URI command {command}");
                     break;
