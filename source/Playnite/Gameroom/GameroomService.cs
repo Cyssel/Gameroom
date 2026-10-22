@@ -137,7 +137,7 @@ namespace Playnite.Gameroom
                 return;
             }
 
-            // Since 1.5.0 recognized games are added right away, like installed games, instead of only offered in the
+            // Since 1.5.1 recognized games are added right away, like installed games, instead of only offered in the
             // notifications, which nobody sees while playing.
             Settings.AutoAddUnknownGames = true;
             Settings.DetectionDefaultsVersion = 1;

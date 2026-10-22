@@ -3,7 +3,7 @@
   <!-- Version of Gameroom itself, used by the updater and the installer (build/publish.ps1 reads it from here).
        Assembly versions keep following Playnite, extensions use them to check compatibility. -->
   <PropertyGroup>
-    <GameroomVersion>1.5.0</GameroomVersion>
+    <GameroomVersion>1.5.1</GameroomVersion>
   </PropertyGroup>
 
   <ItemGroup>

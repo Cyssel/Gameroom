@@ -2,6 +2,12 @@
 
 All notable changes to Gameroom. Gameroom is based on Playnite 10.63.
 
+## 1.5.1
+
+- **Games you play are added right away.** A game started from anywhere is recognized while it runs and added to the library, with a card over the game: *Added to your library*. Before, it waited in the notifications, where it went unnoticed. This applies to games with a recognizable engine or Steam files, and removed games aren't added again.
+- Games added while running get their icon, platform, and a cover from Steam or IGDB.
+- Fix: achievement icons of recent Steam games, which moved to a new Steam server.
+
 ## 1.5.0 — First public release
 
 - **Your own cloud server.** Accounts and cloud saves run on each user's own Supabase project:
@@ -11,12 +17,9 @@ All notable changes to Gameroom. Gameroom is based on Playnite 10.63.
 - **New `gameroom://` links** for play sessions, save backups, play statistics, settings and a sample achievement notification.
 - **English first:** the installer defaults to English. Dates, days and months follow Gameroom's language instead of Windows' region.
 - **Documentation:** getting started, user guide, FAQ and server guide.
-- **Games you play are added right away.** A game started from anywhere is recognized while it runs and added to the library, with a card over the game: *Added to your library*. Before, it waited in the notifications, where it went unnoticed. This applies to games with a recognizable engine or Steam files, and removed games aren't added again.
-- Games added while running get their icon, platform, and a cover from Steam or IGDB.
 - Fixes:
   - "1 session" instead of "1 sessions".
   - Month names in the play statistics chart.
-  - Achievement icons of recent Steam games, which moved to a new Steam server.
 
 ## 1.4.1
 
