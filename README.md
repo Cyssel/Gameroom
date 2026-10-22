@@ -222,7 +222,7 @@ You don't need the full Visual Studio.
 ### Publishing a release
 
 1. Raise `GameroomVersion` in `source/Directory.Build.props`.
-2. Run `.\build\publish.ps1 -Notes "- New thing 1`n- New thing 2"`. It needs [Inno Setup 6](https://jrsoftware.org/isdl.php) and [GitHub CLI](https://cli.github.com) after `gh auth login`.
+2. Run `` .\build\publish.ps1 -Notes "- New thing 1`n- New thing 2" ``. It needs [Inno Setup 6](https://jrsoftware.org/isdl.php) and [GitHub CLI](https://cli.github.com) after `gh auth login`.
 
 The script builds Gameroom, creates the installer and publishes it as a GitHub release, which is where Gameroom looks for updates. `-SkipUpload` only creates the installer, and `-Prerelease` publishes it for the beta channel only.
 
