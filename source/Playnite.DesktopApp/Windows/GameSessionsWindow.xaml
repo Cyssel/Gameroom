@@ -1,0 +1,43 @@
+<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.GameSessionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        mc:Ignorable="d"
+        Style="{DynamicResource StandardWindowStyle}"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Title="{Binding Title}" Height="550" Width="850" MinHeight="300" MinWidth="500"
+        ShowMinimizeButton="False">
+
+    <controls:WindowBase.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
+    </controls:WindowBase.Resources>
+
+    <DockPanel Margin="5">
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource NormalBorderBrush}">
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center" Text="{Binding Summary}" />
+                <Button DockPanel.Dock="Right" Content="{DynamicResource LOCCloseLabel}" IsCancel="True" IsDefault="True"
+                        Style="{StaticResource BottomButton}" Command="{Binding CloseCommand}" />
+            </DockPanel>
+        </Border>
+
+        <Grid Margin="10">
+            <ListView ItemsSource="{Binding Sessions}"
+                      BorderThickness="{StaticResource ControlBorderThickness}" BorderBrush="{StaticResource NormalBorderBrush}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSessionsStart}" Width="160" DisplayMemberBinding="{Binding StartText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSessionsEnd}" Width="80" DisplayMemberBinding="{Binding EndText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSessionsDuration}" Width="110" DisplayMemberBinding="{Binding DurationText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSessionsSource}" Width="170" DisplayMemberBinding="{Binding SourceText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSessionsExecutable}" Width="280" DisplayMemberBinding="{Binding Executable}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <TextBlock Text="{DynamicResource LOCGameroomSessionsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7"
+                       Visibility="{Binding HasSessions, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+        </Grid>
+    </DockPanel>
+</controls:WindowBase>

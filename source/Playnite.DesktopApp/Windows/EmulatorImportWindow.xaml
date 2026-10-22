@@ -1,0 +1,113 @@
+﻿<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.EmulatorImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="clr-namespace:Prism.Interactivity;assembly=Prism.Wpf"
+        xmlns:p="clr-namespace:Playnite;assembly=Playnite"
+        xmlns:pcon="clr-namespace:Playnite.Converters;assembly=Playnite"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        xmlns:pvm="clr-namespace:Playnite.DesktopApp.ViewModels"
+        xmlns:pm="clr-namespace:Playnite.SDK.Models;assembly=Playnite.SDK"
+        xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"      
+        xmlns:pcmd="clr-namespace:Playnite.Commands;assembly=Playnite"       
+        mc:Ignorable="d"
+        d:DesignStyle="{StaticResource WindowDesignStyle}"
+        Style="{DynamicResource StandardWindowStyle}"
+        Title="{DynamicResource LOCEmuWizardWindowTitle}" WindowStartupLocation="CenterOwner"
+        Height="600" Width="800" x:Name="WindowEmulatorImport"
+        AutomationProperties.AutomationId="WindowEmulatorImport">
+
+    <controls:WindowBase.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
+    </controls:WindowBase.Resources>
+
+    <Grid>
+        <Grid.Resources>
+            <p:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" Margin="10,5,10,0"
+                  CanUserAddRows="False" AutoGenerateColumns="False" CanUserResizeRows="False"
+                  SelectionMode="Single" GridLinesVisibility="None" HeadersVisibility="Column"
+                  ItemsSource="{Binding CollectionView}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="{DynamicResource LOCImportLabel}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Import, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="{DynamicResource LOCNameLabel}" SortMemberPath="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="{StaticResource NormalBrushDark}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{DynamicResource LOCFolderLabel}" Binding="{Binding InstallDir}" IsReadOnly="True" />
+                <!--Hack to make the last empty column being able to slect a row-->
+                <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="20,3,10,3">
+                        <TextBlock Text="{DynamicResource LOCEmuImportProfilesToImportHeader}" />
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      MaxHeight="300">
+                            <ItemsControl ItemsSource="{Binding Profiles}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2"
+                                                  IsChecked="{Binding Import}" Content="{Binding Name}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>                        
+                    </StackPanel>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="1">
+            <Button Content="{DynamicResource LOCEmuScanDirectory}"
+                    Command="{Binding ScanCommmand}" />
+            <CheckBox Content="{DynamicResource LOCEmuScanHideImported}" Margin="10,0,0,0"
+                      IsChecked="{Binding HideImported}" VerticalAlignment="Center" />
+            <Button Content="{DynamicResource LOCSelectAll}" Margin="10,0,10,0"
+                    Command="{Binding SelectAllCommmand}" />
+            <Button Content="{DynamicResource LOCDeselectAll}"
+                    Command="{Binding DeselectAllCommmand}" />
+        </StackPanel>
+
+        <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{StaticResource WindowPanelSeparatorBrush}">
+            <DockPanel LastChildFill="False" Margin="5">
+                <Button Content="{DynamicResource LOCCloseLabel}" DockPanel.Dock="Right"
+                        Command="{Binding CancelCommand}" 
+                        Style="{StaticResource BottomButton}" />
+                <Button Content="{DynamicResource LOCImportLabel}" DockPanel.Dock="Right"
+                        Command="{Binding ImportCommand}"
+                        Style="{StaticResource BottomButton}" />
+                <Button Content="{DynamicResource LOCMenuHelpTitle}"
+                        Command="{x:Static pcmd:GlobalCommands.NavigateUrlCommand}"
+                        CommandParameter="{}{DocsRootUrl}/manual/features/emulationSupport/troubleshooting.html#emulator-is-not-being-imported"                        
+                        DockPanel.Dock="Left" Style="{StaticResource BottomButton}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</controls:WindowBase>

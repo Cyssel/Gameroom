@@ -1,0 +1,1206 @@
+﻿<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.GameEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:Playnite;assembly=Playnite"
+        xmlns:pcon="clr-namespace:Playnite.Converters;assembly=Playnite"
+        xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:pm="clr-namespace:Playnite.SDK.Models;assembly=Playnite.SDK"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="clr-namespace:Prism.Interactivity;assembly=Prism.Wpf"
+        xmlns:pctrls="clr-namespace:Playnite.DesktopApp.Controls"
+        xmlns:psdk="clr-namespace:Playnite.SDK;assembly=Playnite.SDK"
+        xmlns:pcmd="clr-namespace:Playnite.Commands;assembly=Playnite"
+        xmlns:pmrk="clr-namespace:Playnite.DesktopApp.Markup"
+        mc:Ignorable="d"
+        d:DesignStyle="{StaticResource WindowDesignStyle}"
+        Style="{DynamicResource StandardWindowStyle}"
+        Title="{DynamicResource LOCGameEditWindowTitle}"
+        Height="720" Width="850"
+        WindowStartupLocation="CenterOwner"
+        x:Name="mainWindow"
+        AutomationProperties.AutomationId="WindowGameEdit">
+    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing" >
+            <prism:InvokeCommandAction Command="{Binding WindowClosingCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <controls:WindowBase.Resources>
+        <p:BindingProxy x:Key="Proxy" Data="{Binding}" />
+        <pcon:ReleaseDateToStringConverter x:Key="ReleaseDateToStringConverter" />
+        <pcon:ListToStringConverter x:Key="ListToStringConverter" />
+        <pcon:NullableDateToStringConverter x:Key="NullableDateToStringConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <pcon:InvertableBooleanToVisibilityConverter x:Key="InvertableBooleanToVisibilityConverter" />
+        <pcon:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <pcon:NegateConverter x:Key="NegateConverter" />
+        <pcon:ValueConverterGroup x:Key="EnumCompVisibilityConverterInverted">
+            <pcon:EnumToBooleanConverter/>
+            <pcon:NegateConverter/>
+            <BooleanToVisibilityConverter/>
+        </pcon:ValueConverterGroup>
+        <Style x:Key="SaveChangesCheck" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="Margin" Value="0,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="ToolTip" Value="{DynamicResource LOCGameEditChangeSaveTooltip}" />
+            <Setter Property="Visibility" Value="{Binding Data.ShowCheckBoxes, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Proxy}}" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource DataChangeNotifBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate x:Key="SectionHeaderTemplate" x:Shared="False">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text=" ! " Foreground="{StaticResource DataChangeNotifBrush}" ToolTip="{DynamicResource LOCGameEditChangeNotif}"
+                           Visibility="{Binding Tag, RelativeSource={RelativeSource AncestorType=ContentControl}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding Content, RelativeSource={RelativeSource AncestorType=ContentControl}}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=TextBlock}}" />
+            </StackPanel>
+        </DataTemplate>
+    </controls:WindowBase.Resources>
+
+    <Grid Margin="0,5,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TabControl Name="TabControlMain" DockPanel.Dock="Top" Grid.Column="0" Grid.Row="0">
+            <TabItem Name="TabGeneral">
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCGeneralLabel}"
+                                    Tag="{Binding ShowGeneralChangeNotif}" />
+                </TabItem.Header>
+                <ScrollViewer>
+                    <Grid Grid.Column="0" Grid.Row="0" Margin="10">
+                        <Grid.Resources>
+                            <!--This one has to be specifically referenced otherwise it messes up with search box in dropdown selector-->
+                            <Style x:Key="TextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" >
+                                <Setter Property="Margin" Value="3" />
+                            </Style>
+                            <Style TargetType="pctrls:LongNumericBox" BasedOn="{StaticResource {x:Type pctrls:LongNumericBox}}" >
+                                <Setter Property="Margin" Value="3" />
+                            </Style>
+                            <Style TargetType="pctrls:NullIntNumericBox" BasedOn="{StaticResource {x:Type pctrls:NullIntNumericBox}}" >
+                                <Setter Property="Margin" Value="3" />
+                            </Style>
+                            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}" >
+                                <Setter Property="Margin" Value="3" />
+                            </Style>
+                            <Style TargetType="pctrls:DdItemListSelectionBox" BasedOn="{StaticResource {x:Type pctrls:DdItemListSelectionBox}}" >
+                                <Setter Property="Margin" Value="3" />
+                                <Setter Property="ShowSearchBox" Value="True" />
+                            </Style>
+                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                <Setter Property="Margin" Value="0,0,0,0" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" >
+                                <Setter Property="Margin" Value="8,0,10,0" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}" >
+                                <Setter Property="Margin" Value="3" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Name -->
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{DynamicResource LOCNameLabel}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="0" Name="CheckName" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseNameChanges}"/>
+                        <TextBox Grid.Column="2" Grid.Row="0" Name="TextName" Style="{StaticResource TextBoxStyle}"
+                                    Text="{Binding EditingGame.Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- Sorting Name -->
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="{DynamicResource LOCGameSortingNameTitle}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="1" Name="CheckSortingName" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseSortingNameChanges}"/>
+                        <TextBox Grid.Column="2" Grid.Row="1" Name="TextSortingName" Style="{StaticResource TextBoxStyle}"
+                                    Text="{Binding EditingGame.SortingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- Platform -->
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="{DynamicResource LOCGamePlatformTitle}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="2" Name="CheckPlatform" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UsePlatformChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="2">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddPlatformCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                           IsThreeState="{Binding IsMultiGameEdit}"
+                                                           ItemsList="{Binding Platforms}" />
+                        </DockPanel>
+
+                        <!-- Genres -->
+                        <TextBlock Grid.Column="0" Grid.Row="3" Text="{DynamicResource LOCGenresLabel}" />
+                        <CheckBox Grid.Column="1" Grid.Row="3" Name="CheckGenres" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseGenresChanges}" />
+                        <DockPanel Grid.Column="2" Grid.Row="3">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddGenreCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Genres}" />
+                        </DockPanel>
+
+                        <!-- Developers -->
+                        <TextBlock Grid.Column="0" Grid.Row="4" Text="{DynamicResource LOCDevelopersLabel}"/>
+                        <CheckBox Grid.Column="1" Grid.Row="4" Name="CheckDeveloper" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseDeveloperChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="4">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddDeveloperCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Developers}" />
+                        </DockPanel>
+
+                        <!-- Publishers -->
+                        <TextBlock Grid.Column="0" Grid.Row="5" Text="{DynamicResource LOCPublishersLabel}" />
+                        <CheckBox Grid.Column="1" Grid.Row="5" Name="CheckPublisher" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UsePublisherChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="5">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddPublisherCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Publishers}" />
+                        </DockPanel>
+
+                        <!-- Categories -->
+                        <TextBlock Grid.Column="0" Grid.Row="6" Text="{DynamicResource LOCCategoriesLabel}" />
+                        <CheckBox Grid.Column="1" Grid.Row="6" Name="CheckCategories" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseCategoryChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="6">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddCategoryCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Categories}" />
+                        </DockPanel>
+
+                        <!-- Features -->
+                        <TextBlock Grid.Column="0" Grid.Row="7" Text="{DynamicResource LOCFeaturesLabel}" />
+                        <CheckBox Grid.Column="1" Grid.Row="7" Name="CheckFeature" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseFeatureChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="7">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddFeatureCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Features}" />
+                        </DockPanel>
+
+                        <!-- Tags -->
+                        <TextBlock Grid.Column="0" Grid.Row="8" Text="{DynamicResource LOCTagsLabel}" />
+                        <CheckBox Grid.Column="1" Grid.Row="8" Name="CheckTag" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseTagChanges}"/>
+                        <DockPanel Grid.Column="2" Grid.Row="8">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddTagCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                   IsThreeState="{Binding IsMultiGameEdit}"
+                                                   ItemsList="{Binding Tags}" />
+                        </DockPanel>
+
+                        <!-- Description -->
+                        <TextBlock Grid.Column="0" Grid.Row="9" Text="{DynamicResource LOCGameDescriptionTitle}"
+                                   VerticalAlignment="Top" Margin="8,6,10,0"/>
+                        <CheckBox Grid.Column="1" Grid.Row="9" Name="CheckDescription" Style="{StaticResource SaveChangesCheck}"
+                                  VerticalAlignment="Top" Margin="0,5,0,0"
+                                    IsChecked="{Binding UseDescriptionChanges}"/>
+                        <TextBox Grid.Column="2" Grid.Row="9" Grid.RowSpan="13" Grid.ColumnSpan="6"
+                                 FontFamily="{DynamicResource MonospaceFontFamily}"
+                                 VerticalAlignment="Stretch" Margin="3,5,3,3"
+                                 TextWrapping="Wrap" AcceptsReturn="True" Name="TextDescription"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 Text="{Binding EditingGame.Description, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="{DynamicResource LOCDescriptionHTMLSupportTooltip}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0"/>
+
+                        <!-- Release Date -->
+                        <TextBlock Grid.Column="3" Grid.Row="0" Text="{DynamicResource LOCGameReleaseDateTitle}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="0" Name="CheckReleaseDate" Style="{StaticResource SaveChangesCheck}"
+                                    IsChecked="{Binding UseReleaseDateChanges}"/>
+                        <TextBox Grid.Column="5" Grid.Row="0" Style="{StaticResource TextBoxStyle}"
+                                 ToolTip="{DynamicResource LOCReleaseDateTooltip}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0">
+                            <TextBox.Text>
+                                <Binding Path="EditingGame.ReleaseDate"
+                                         UpdateSourceTrigger="PropertyChanged" 
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True"
+                                         Converter="{pcon:EditingReleaseDateToStringConverter}">
+                                    <Binding.ValidationRules>
+                                        <pcon:ReleaseDateFieldValidation />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <!-- Series -->
+                        <TextBlock Grid.Column="3" Grid.Row="1" Text="{DynamicResource LOCSeriesLabel}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="1" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseSeriesChanges}"/>
+                        <DockPanel Grid.Column="5" Grid.Row="1">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddSeriesCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                           IsThreeState="{Binding IsMultiGameEdit}"
+                                                           ItemsList="{Binding Series}" />
+                        </DockPanel>
+
+                        <!-- AgeRating -->
+                        <TextBlock Grid.Column="3" Grid.Row="2" Text="{DynamicResource LOCAgeRatingLabel}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="2" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseAgeRatingChanges}"/>
+                        <DockPanel Grid.Column="5" Grid.Row="2">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddAgeRatingCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                           IsThreeState="{Binding IsMultiGameEdit}"
+                                                           ItemsList="{Binding AgeRatings}" />
+                        </DockPanel>
+
+                        <!-- Region -->
+                        <TextBlock Grid.Column="3" Grid.Row="3" Text="{DynamicResource LOCRegionLabel}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="3" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseRegionChanges}"/>
+                        <DockPanel Grid.Column="5" Grid.Row="3">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddRegionCommand}" />
+                            <pctrls:DdItemListSelectionBox DockPanel.Dock="Left"
+                                                           IsThreeState="{Binding IsMultiGameEdit}"
+                                                           ItemsList="{Binding Regions}" />
+                        </DockPanel>
+
+                        <!-- Source -->
+                        <TextBlock Grid.Column="3" Grid.Row="4" Text="{DynamicResource LOCSourceLabel}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="4" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseSourceChanges}"/>
+                        <DockPanel Grid.Column="5" Grid.Row="4">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                    VerticalContentAlignment="Center"
+                                    Padding="4,2,4,2" Margin="3"
+                                    Command="{Binding AddSourceCommand}" />
+                            <ComboBox DockPanel.Dock="Left"
+                                  ItemsSource="{Binding Sources}"
+                                  SelectedValuePath="Id" DisplayMemberPath="Name"
+                                  SelectedValue="{Binding EditingGame.SourceId, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+
+                        <!-- CompletionStatus -->
+                        <TextBlock Grid.Column="3" Grid.Row="5" Text="{DynamicResource LOCCompletionStatus}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="5" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseCompletionStatusChanges}"/>
+                        <DockPanel Grid.Column="5" Grid.Row="5">
+                            <Button Content="+" FontWeight="Bold" DockPanel.Dock="Right"
+                                VerticalContentAlignment="Center"
+                                Padding="4,2,4,2" Margin="3"
+                                Command="{Binding AddCompletionStatusCommand}" />
+                            <ComboBox IsTabStop="False" DockPanel.Dock="Left"
+                                  ItemsSource="{Binding CompletionStatuses}"
+                                  SelectedValuePath="Id" DisplayMemberPath="Name"
+                                  SelectedValue="{Binding EditingGame.CompletionStatusId, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+
+                        <!-- UserScore -->
+                        <TextBlock Grid.Column="3" Grid.Row="6" Text="{DynamicResource LOCUserScore}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="6" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseUserScoreChanges}"/>
+                        <TextBox Grid.Column="5" Grid.Row="6" Width="50" HorizontalAlignment="Left"
+                                 Style="{StaticResource TextBoxStyle}"
+                                 ToolTip="{DynamicResource LOCDescriptionScoreValues}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0">
+                            <TextBox.Text>
+                                <Binding Path="EditingGame.UserScore"
+                                         UpdateSourceTrigger="PropertyChanged" 
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True"
+                                         Converter="{pcon:NullableIntToStringConverter}">
+                                    <Binding.ValidationRules>
+                                        <pcon:NullableIntFieldValidation MinValue="0" MaxValue="100" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <!-- CriticScore -->
+                        <TextBlock Grid.Column="3" Grid.Row="7" Text="{DynamicResource LOCCriticScore}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="7" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseCriticScoreChanges}"/>
+                        <TextBox Grid.Column="5" Grid.Row="7" Width="50" HorizontalAlignment="Left"
+                                 Style="{StaticResource TextBoxStyle}"
+                                 ToolTip="{DynamicResource LOCDescriptionScoreValues}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0">
+                            <TextBox.Text>
+                                <Binding Path="EditingGame.CriticScore"
+                                         UpdateSourceTrigger="PropertyChanged" 
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True"
+                                         Converter="{pcon:NullableIntToStringConverter}">
+                                    <Binding.ValidationRules>
+                                        <pcon:NullableIntFieldValidation MinValue="0" MaxValue="100" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+
+                        <!-- CommunityScore -->
+                        <TextBlock Grid.Column="3" Grid.Row="8" Text="{DynamicResource LOCCommunityScore}"/>
+                        <CheckBox Grid.Column="4" Grid.Row="8" Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseCommunityScoreChanges}"/>
+                        <TextBox Grid.Column="5" Grid.Row="8" Width="50" HorizontalAlignment="Left"
+                                 Style="{StaticResource TextBoxStyle}"
+                                 ToolTip="{DynamicResource LOCDescriptionScoreValues}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0">
+                            <TextBox.Text>
+                                <Binding Path="EditingGame.CommunityScore"
+                                         UpdateSourceTrigger="PropertyChanged" 
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True"
+                                         Converter="{pcon:NullableIntToStringConverter}">
+                                    <Binding.ValidationRules>
+                                        <pcon:NullableIntFieldValidation MinValue="0" MaxValue="100" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCAdvanced}"
+                                    Tag="{Binding ShowAdvancedChangeNotif}" />
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid.Resources>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                        <Style TargetType="pctrls:LongNumericBox" BasedOn="{StaticResource {x:Type pctrls:LongNumericBox}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                        <Style TargetType="pctrls:UlongNumericBox" BasedOn="{StaticResource {x:Type pctrls:UlongNumericBox}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                        <Style TargetType="pctrls:NullIntNumericBox" BasedOn="{StaticResource {x:Type pctrls:NullIntNumericBox}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                            <Setter Property="Margin" Value="0,0,0,0" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" >
+                            <Setter Property="Margin" Value="8,0,10,0" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                        <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}" >
+                            <Setter Property="Margin" Value="3" />
+                        </Style>    
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Last Played -->
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{DynamicResource LOCLastPlayedLabel}"/>
+                    <CheckBox Grid.Column="0" Grid.Row="0" Style="{StaticResource SaveChangesCheck}"
+                                IsChecked="{Binding UseLastActivityChanges}"/>
+                    <DatePicker Grid.Column="2" Grid.Row="0"
+                                SelectedDate="{Binding EditingGame.LastActivity}"/>
+
+                    <!-- PlayTime -->
+                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{DynamicResource LOCTimePlayed}"/>
+                    <CheckBox Grid.Column="0" Grid.Row="1" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UsePlaytimeChanges}"/>
+                    <DockPanel Grid.Column="2" Grid.Row="1">
+                        <TextBlock Text="{Binding EditingGame.Playtime, Converter={pcon:PlayTimeToStringConverter}, ConverterParameter={pmrk:Settings PlaytimeUseDaysFormat, DirectValue=True}}"
+                                   DockPanel.Dock="Right" />
+                        <TextBox ToolTip="{DynamicResource LOCDescriptionPlaytimeSeconds}"
+                                 ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0"
+                                 DockPanel.Dock="Left">
+                            <TextBox.Text>
+                                <Binding Path="EditingGame.Playtime"
+                                         UpdateSourceTrigger="PropertyChanged" 
+                                         ValidatesOnDataErrors="True"
+                                         NotifyOnValidationError="True"
+                                         Converter="{pcon:UlongToStringConverter}">
+                                    <Binding.ValidationRules>
+                                        <pcon:UlongFieldValidation />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </DockPanel>
+
+                    <!-- PlayCount -->
+                    <TextBlock Grid.Column="1" Grid.Row="2" Text="{DynamicResource LOCPlayCountLabel}"/>
+                    <CheckBox Grid.Column="0" Grid.Row="2" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UsePlayCountChanges}"/>
+                    <TextBox Grid.Column="2" Grid.Row="2">
+                        <TextBox.Text>
+                            <Binding Path="EditingGame.PlayCount"
+                                    UpdateSourceTrigger="PropertyChanged" 
+                                    ValidatesOnDataErrors="True"
+                                    NotifyOnValidationError="True"
+                                    Converter="{pcon:UlongToStringConverter}">
+                                <Binding.ValidationRules>
+                                    <pcon:UlongFieldValidation />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <!-- Version -->
+                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{DynamicResource LOCVersionLabel}"/>
+                    <CheckBox Grid.Column="0" Grid.Row="3" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UseVersionChanges}"/>
+                    <TextBox Grid.Column="2" Grid.Row="3"
+                             Text="{Binding EditingGame.Version, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!--Manual-->
+                    <CheckBox Grid.Column="0" Grid.Row="4" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UseManualChanges}"/>
+                    <TextBlock Grid.Column="1" Grid.Row="4" Text="{DynamicResource LOCGameManualTitle}"/>
+                    <TextBox Grid.Column="2" Grid.Row="4"
+                             Text="{Binding EditingGame.Manual, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Canvas Height="20" Grid.Column="0" Grid.Row="5" />
+
+                    <!-- Hidden -->
+                    <TextBlock Grid.Column="1" Grid.Row="6" Text="{DynamicResource LOCGameHiddenTitle}" />
+                    <CheckBox Grid.Column="0" Grid.Row="6" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UseHiddenChanges}"/>
+                    <CheckBox Grid.Column="2" Grid.Row="6" Margin="3"
+                              IsChecked="{Binding EditingGame.Hidden}"/>
+
+                    <!-- Favorite -->
+                    <TextBlock Grid.Column="1" Grid.Row="7" Text="{DynamicResource LOCGameFavoriteTitle}" />
+                    <CheckBox Grid.Column="0" Grid.Row="7" Style="{StaticResource SaveChangesCheck}"
+                              IsChecked="{Binding UseFavoriteChanges}"/>
+                    <CheckBox Grid.Column="2" Grid.Row="7" Margin="3"
+                              IsChecked="{Binding EditingGame.Favorite}" />
+
+                    <!-- HDR -->
+                    <TextBlock Grid.Column="1" Grid.Row="8" Text="{DynamicResource LOCGameHdrTitle}" />
+                    <CheckBox Grid.Column="0" Grid.Row="8" Style="{StaticResource SaveChangesCheck}"
+                                IsChecked="{Binding UseHdrChanges}"/>
+                    <CheckBox Grid.Column="2" Grid.Row="8" Margin="3"
+                              IsChecked="{Binding EditingGame.EnableSystemHdr}"
+                              ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0"
+                              ToolTipService.ShowOnDisabled="True">
+                        <CheckBox.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource LOCGameHdrTooltip}"
+                                           Margin="0"/>
+                                <TextBlock Text="{DynamicResource LOCGameHdrNotSupportedTooltip}"
+                                           Margin="0"
+                                           Visibility="{Binding IsHdrSupported, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+
+                    <Canvas Height="20" Grid.Column="0" Grid.Row="9" />
+
+                    <!-- Added -->
+                    <TextBlock Grid.Column="1" Grid.Row="10" Text="{DynamicResource LOCAddedLabel}"/>
+                    <CheckBox Grid.Column="0" Grid.Row="10" Style="{StaticResource SaveChangesCheck}"
+                                IsChecked="{Binding UseAddedChanges}"/>
+                    <DatePicker Grid.Column="2" Grid.Row="10"
+                                SelectedDate="{Binding EditingGame.Added}"/>
+
+                    <!-- Modified -->
+                    <TextBlock Grid.Column="1" Grid.Row="11" Text="{DynamicResource LOCModifiedLabel}"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <TextBlock Grid.Column="2" Grid.Row="11" Margin="3,6,3,6"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Text="{Binding EditingGame.Modified, Converter={StaticResource NullableDateToStringConverter}}"/>
+
+                    <!-- Notes -->
+                    <TextBlock Grid.Column="1" Grid.Row="12" Text="{DynamicResource LOCNotesLabel}"
+                               VerticalAlignment="Top" Margin="8,16,10,0" />
+                    <CheckBox Grid.Column="0" Grid.Row="12"  Style="{StaticResource SaveChangesCheck}"
+                              VerticalAlignment="Top" Margin="0,15,0,0"
+                              IsChecked="{Binding UseNotesChanges}"/>
+                    <TextBox Grid.Column="2" Grid.Row="12" Margin="0,15,0,0"
+                             Text="{Binding EditingGame.Notes, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.ColumnSpan="4" TextWrapping="Wrap"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                             VerticalAlignment="Stretch" />
+
+                    <!-- GameId -->
+                    <TextBlock Grid.Column="4" Grid.Row="0" Text="{DynamicResource LOCGameId}"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBox Grid.Column="5" Grid.Row="0" Text="{Binding EditingGame.GameId}" IsReadOnly="True"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <!-- Internal Id -->
+                    <TextBlock Grid.Column="4" Grid.Row="1" Text="{DynamicResource LOCDatabaseId}"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBox Grid.Column="5" Grid.Row="1" Text="{Binding EditingGame.Id}" IsReadOnly="True"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <!-- Library -->
+                    <TextBlock Grid.Column="4" Grid.Row="2" Text="{DynamicResource LOCGameProviderTitle}"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Column="5" Grid.Row="2" Text="{Binding LibraryPlugin.Name, FallbackValue='Gameroom'}"
+                               Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                </Grid>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header> 
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCMediaLabel}"
+                                    Tag="{Binding ShowMediaChangeNotif}" />
+                </TabItem.Header>
+                <DockPanel>
+                    <Button Content="{DynamicResource LOCOpenMetadataFolder}" HorizontalAlignment="Left"
+                            Margin="10,0,0,10" DockPanel.Dock="Bottom"
+                            Command="{Binding OpenMetadataFolderCommand}"
+                            Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Grid Margin="10" DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Column="0" Grid.Row="0" Header="{DynamicResource LOCGameIconTitle}">
+                            <GroupBox.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Name="CheckIcon" VerticalAlignment="Center" Style="{DynamicResource SaveChangesCheck}"
+                                                  IsChecked="{Binding Data.UseIconChanges, Source={StaticResource Proxy}}"/>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupBox.HeaderTemplate>
+                            <DockPanel LastChildFill="True" Background="Transparent" AllowDrop="True">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5" DockPanel.Dock="Top">
+                                    <Button ToolTip="{DynamicResource LOCSelectIconTitle}"
+                                            Content="&#xec3e;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SelectIconCommand}" />
+                                    <Button ToolTip="{DynamicResource LOCSelectUrlTitle}" Margin="5,0,0,0"
+                                            Content="&#xef71;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SetIconUrlCommand}" />
+                                    <Button ToolTip="{DynamicResource LOCRemoveLabel}" Margin="5,0,0,0"
+                                            Content="&#xec53;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding RemoveIconCommand}" />
+                                    <Button Margin="5,0,0,0" ToolTip="{DynamicResource LOCSettingsWebImageSearch}"
+                                            Content="&#xef3e;" FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SelectGoogleIconCommand}" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding IconMetadata}" DockPanel.Dock="Top" Margin="5,0,0,0"
+                                           ToolTipService.InitialShowDelay="0" HorizontalAlignment="Left">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsIconTooLage}" Value="True">
+                                                    <Setter Property="Foreground" Value="OrangeRed" />
+                                                    <Setter Property="ToolTip" Value="{StaticResource LOCLargeMediaWarningTooltip}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Image Source="{Binding IconImageObject, Mode=OneWay}"
+                                       Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" Name="ImageIcon"
+                                       DockPanel.Dock="Top" Height="64"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Drop" >
+                                        <prism:InvokeCommandAction Command="{Binding DropIconCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </DockPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="0" Grid.Row="1" Header="{DynamicResource LOCGameCoverImageTitle}" Margin="0,5,0,0">
+                            <GroupBox.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Name="CheckImage" VerticalAlignment="Center" Style="{StaticResource SaveChangesCheck}"
+                                                  IsChecked="{Binding Data.UseImageChanges, Source={StaticResource Proxy}}"/>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupBox.HeaderTemplate>
+                            <DockPanel LastChildFill="True" Background="Transparent" AllowDrop="True">
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5">
+                                    <Button Content="&#xec3e;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            ToolTip="{DynamicResource LOCSelectCoverTitle}"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding SelectCoverCommand}"/>
+                                    <Button ToolTip="{DynamicResource LOCSelectUrlTitle}" Margin="5,0,0,0"
+                                            Content="&#xef71;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SetCoverUrlCommand}" />
+                                    <Button ToolTip="{DynamicResource LOCRemoveLabel}" Margin="5,0,0,0"
+                                            Content="&#xec53;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding RemoveImageCommand}" />
+                                    <Button Margin="5,0,0,0" ToolTip="{DynamicResource LOCSettingsWebImageSearch}"
+                                            Content="&#xef3e;" FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SelectGoogleCoverCommand}" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding CoverMetadata}" DockPanel.Dock="Top" Margin="5,0,0,0"
+                                           ToolTipService.InitialShowDelay="0" HorizontalAlignment="Left">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCoverTooLage}" Value="True">
+                                                    <Setter Property="Foreground" Value="OrangeRed" />
+                                                    <Setter Property="ToolTip" Value="{StaticResource LOCLargeMediaWarningTooltip}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Image Source="{Binding CoverImageObject, Mode=OneWay}"
+                                       Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" Name="ImageImage"
+                                       DockPanel.Dock="Top"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Drop" >
+                                        <prism:InvokeCommandAction Command="{Binding DropCoverCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </DockPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                              Header="{DynamicResource LOCGameBackgroundTitle}" Margin="5,0,0,0">
+                            <GroupBox.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Name="CheckImage" VerticalAlignment="Center" Style="{StaticResource SaveChangesCheck}"
+                                              IsChecked="{Binding Data.UseBackgroundChanges, Source={StaticResource Proxy}}"/>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupBox.HeaderTemplate>
+                            <DockPanel DockPanel.Dock="Top" Background="Transparent" AllowDrop="True">
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5">
+                                    <Button Content="&#xec3e;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            ToolTip="{DynamicResource LOCSelectBackgroundTitle}"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding SelectBackgroundCommand}"/>
+                                    <Button ToolTip="{DynamicResource LOCSelectUrlTitle}" Margin="5,0,0,0"
+                                            Content="&#xef71;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SetBackgroundUrlCommand}" />
+                                    <Button ToolTip="{DynamicResource LOCRemoveLabel}" Margin="5,0,0,0"
+                                            Content="&#xec53;"
+                                            FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding RemoveBackgroundCommand}" />
+                                    <Button Margin="5,0,0,0" ToolTip="{DynamicResource LOCSettingsWebImageSearch}"
+                                            Content="&#xef3e;" FontFamily="{DynamicResource FontIcoFont}"
+                                            Command="{Binding SelectGoogleBackgroundCommand}" />
+                                </StackPanel>
+                                <DockPanel DockPanel.Dock="Top" Margin="5,5,0,5"
+                                       Visibility="{Binding ShowBackgroundUrl, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{DynamicResource LOCImageURL}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                                    <TextBox IsReadOnly="True" DockPanel.Dock="Left" Margin="5,0,0,0"
+                                         Text="{Binding EditingGame.BackgroundImage}" />
+                                </DockPanel>
+                                <TextBlock Text="{Binding BackgroundMetadata}" DockPanel.Dock="Top" Margin="5,0,0,0"
+                                           ToolTipService.InitialShowDelay="0" HorizontalAlignment="Left">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsBackgroundTooLage}" Value="True">
+                                                    <Setter Property="Foreground" Value="OrangeRed" />
+                                                    <Setter Property="ToolTip" Value="{StaticResource LOCLargeMediaWarningTooltip}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Image Source="{Binding BackgroundImageObject, Mode=OneWay}"
+                                   Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                                   DockPanel.Dock="Top"/>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Drop" >
+                                        <prism:InvokeCommandAction Command="{Binding DropBackgroundCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </DockPanel>
+                        </GroupBox>
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCLinksLabel}"
+                                    Tag="{Binding ShowLinksChangeNotif}" />
+                </TabItem.Header>
+                <DockPanel>
+                    <TextBlock Visibility="{Binding IsMultiGameEdit,Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Text="{DynamicResource LOCMultiEditOverwriteWarning}" Foreground="{DynamicResource WarningBrush}"
+                               DockPanel.Dock="Top" Margin="10,10,10,0" />
+                    <Button Name="ButtonAddLink" Content="{DynamicResource LOCAddLinkButton}" HorizontalAlignment="Left" Margin="10,10,0,0"
+                            Command="{Binding AddLinkCommand}" DockPanel.Dock="Top"/>
+                    <CheckBox Name="CheckLinks" Content="{DynamicResource LOCSaveChanges}" Margin="10,5,5,0" DockPanel.Dock="Top"
+                              IsChecked="{Binding UseLinksChanges}" Style="{StaticResource SaveChangesCheck}"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10,5,10,10" DockPanel.Dock="Top">                       
+                        <ItemsControl IsTabStop="False" Name="ItemsLinks" Grid.IsSharedSizeScope="True"
+                                        ItemsSource="{Binding EditingGame.Links}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="-5,0,-5,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" MinWidth="200" SharedSizeGroup="A" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBox Text="{Binding Name}" Grid.Column="0" Grid.Row="0" Margin="5"
+                                                    VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+                                        <TextBox Text="{Binding Url}" Grid.Column="1" Grid.Row="0" Margin="5"
+                                                    VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2" Grid.Row="0" Margin="5">
+                                            <Button Name="ButtonMoveUpAction" FontFamily="Marlett" Content="5" Margin="0,0,5,0"
+                                                    Command="{Binding Data.MoveUpLinkCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Name="ButtonMoveDownAction" FontFamily="Marlett" Content="6" Margin="0,0,5,0"
+                                                    Command="{Binding Data.MoveDownLinkCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Name="ButtonRemoveLink" FontFamily="Marlett" Content="r"
+                                                    Command="{Binding Data.RemoveLinkCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCInstallationLabel}"
+                                    Tag="{Binding ShowInstallChangeNotif}" />
+                </TabItem.Header>
+                <DockPanel>
+                    <Grid Margin="10" DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <CheckBox Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="0,0,5,0"
+                                  Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseInstallDirChanges}"/>
+                        <TextBlock Text="{DynamicResource LOCGameInstallDirTitle}" Grid.Column="1" Margin="0,5,5,5" VerticalAlignment="Center" />
+                        <pctrls:PathSelectionBox Grid.Column="2" Margin="5" x:Name="TextInstallDir" VerticalAlignment="Center"                                                
+                                                 Text="{Binding EditingGame.InstallDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                                 ShowDirectorySelector="True" />
+
+                        <CheckBox Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Margin="0,0,5,0"
+                                  Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseInstallStateChanges}"/>
+                        <TextBlock Text="{DynamicResource LOCGameIsGameInstalledTitle}"
+                               VerticalAlignment="Center"
+                               Grid.Column="1" Grid.Row="2" Margin="0,5,5,5" />
+                        <CheckBox Grid.Row="2" Grid.Column="2" Margin="5,5,5,5"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding EditingGame.IsInstalled}"/>
+
+                        <CheckBox Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="0,0,5,0"
+                                  Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseOverrideInstallState}">
+                            <CheckBox.Visibility>
+                                <MultiBinding Converter="{pcon:MultiBooleanToVisibilityConverter}">
+                                    <Binding Path="ShowOverrideInstallStateOption" />
+                                    <Binding Path="ShowCheckBoxes" />
+                                </MultiBinding>
+                            </CheckBox.Visibility>
+                        </CheckBox>
+                        <TextBlock Text="{DynamicResource LOCOverrideInstallState}"
+                                   ToolTip="{DynamicResource LOCOverrideInstallStateTooltip}"
+                                   Visibility="{Binding ShowOverrideInstallStateOption, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" Grid.Row="3" Margin="0,5,5,5" />
+                        <CheckBox Grid.Row="3" Grid.Column="2" Margin="5,5,5,5"
+                                  ToolTip="{DynamicResource LOCOverrideInstallStateTooltip}"
+                                  VerticalAlignment="Center"
+                                  Visibility="{Binding ShowOverrideInstallStateOption, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  IsChecked="{Binding EditingGame.OverrideInstallState}"/>
+                        
+                        <!-- InstallSize -->
+                        <CheckBox Grid.Column="0" Grid.Row="4" Style="{StaticResource SaveChangesCheck}"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding UseInstallSizeChanges}"/>
+                        <TextBlock Grid.Column="1" Grid.Row="411" Text="{DynamicResource LOCInstallSizeLabel}"
+                                   VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Horizontal">
+                            <Button Content="{DynamicResource LOCInstallSizeCalculate}"
+                                    ToolTip="{DynamicResource LOCInstallSizeCalculateEditButtonTooltip}"
+                                    ToolTipService.Placement="Top"
+                                    VerticalAlignment="Center"
+                                    Margin="5" DockPanel.Dock="Right"
+                                    Command="{Binding CalculateInstallSizeWithDialogCommand}"
+                                    Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <TextBox ToolTip="{DynamicResource LOCDescriptionSizeBytes}"
+                                     VerticalAlignment="Center"
+                                     Margin="5"
+                                     ToolTipService.Placement="Top" ToolTipService.InitialShowDelay="0"
+                                     MinWidth="120">
+                                <TextBox.Text>
+                                    <Binding Path="EditingGame.InstallSize"
+                                             UpdateSourceTrigger="PropertyChanged" 
+                                             ValidatesOnDataErrors="True"
+                                             NotifyOnValidationError="True"
+                                             Converter="{pcon:NullableUlongToStringConverter}">
+                                        <Binding.ValidationRules>
+                                            <pcon:NullableUlongFieldValidation />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock VerticalAlignment="Center" Margin="5"
+                                       Text="{Binding EditingGame.InstallSize, Converter={pcon:NullableUlongBytesSizeToStringConverter}}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Button Content="{DynamicResource LOCAddRom}" HorizontalAlignment="Left" Margin="10,0,0,0"
+                            Command="{Binding AddRomCommand}" DockPanel.Dock="Top"/>
+                    <CheckBox Name="CheckSaveRoms" Content="{DynamicResource LOCSaveChanges}" Margin="10,5,5,0" DockPanel.Dock="Top"
+                              IsChecked="{Binding UseRomsChanges}" Style="{StaticResource SaveChangesCheck}"/>
+
+                    <ListView Margin="10,5,10,10" DockPanel.Dock="Top"
+                              ItemsSource="{Binding EditingGame.Roms}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                                                <GridViewRowPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Stretch" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="300" Header="{DynamicResource LOCNameLabel}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Name}" Margin="0,5,0,0"
+                                                     VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="350" Header="{DynamicResource LOCPathLabel}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <pctrls:PathSelectionBox Text="{Binding Path}" Margin="0,5,0,0"
+                                                                     VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                                                                     ShowFileSelector="True"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="150">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                                <Button FontFamily="Marlett" Content="5" Margin="0,0,5,0"
+                                                    Command="{Binding Data.MoveUpRomCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                                <Button FontFamily="Marlett" Content="6" Margin="0,0,5,0"
+                                                    Command="{Binding Data.MoveDownRomCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                                <Button FontFamily="Marlett" Content="r"
+                                                    Command="{Binding Data.RemoveRomCommand, Source={StaticResource Proxy}}"
+                                                    CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>                
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCActionsLabel}"
+                                    Tag="{Binding ShowActionsChangeNotif}" />
+                </TabItem.Header>
+                <DockPanel>
+                    <Button Content="{DynamicResource LOCMenuHelpTitle}" DockPanel.Dock="Bottom" MinWidth="80"
+                            Command="{x:Static pcmd:GlobalCommands.NavigateUrlCommand}" Margin="10,0,0,5"
+                            HorizontalAlignment="Left"
+                            CommandParameter="{}{DocsRootUrl}/manual/library/games/gameActions.html" />
+                    
+                    <TextBlock Visibility="{Binding IsMultiGameEdit,Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Text="{DynamicResource LOCMultiEditOverwriteWarning}" Foreground="{DynamicResource WarningBrush}"
+                        DockPanel.Dock="Top" Margin="10,10,10,0" />
+
+                    <StackPanel Orientation="Horizontal" Margin="10,5,10,5" DockPanel.Dock="Top"
+                            Visibility="{Binding ShowIncludeLibraryPluginAction, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <CheckBox VerticalAlignment="Center"
+                                  IsChecked="{Binding UseIncludeLibraryPluginAction}"
+                                  Style="{StaticResource SaveChangesCheck}"/>
+                        <TextBlock VerticalAlignment="Center"
+                                Text="{DynamicResource LOCIncludePluginGameActions}" />
+                        <CheckBox Margin="5,5,5,5" VerticalAlignment="Center"
+                                IsChecked="{Binding EditingGame.IncludeLibraryPluginAction}"/>
+                    </StackPanel>
+
+                    <Button Content="{DynamicResource LOCAddAction}" DockPanel.Dock="Top" HorizontalAlignment="Left"
+                            Command="{Binding AddActionCommand}" Margin="10,10,10,5"/>
+                    <CheckBox Content="{DynamicResource LOCSaveChanges}" VerticalAlignment="Center" DockPanel.Dock="Top" HorizontalAlignment="Left"
+                              IsChecked="{Binding UseGameActionsChanges}" Margin="10,0,0,0"
+                              Style="{StaticResource SaveChangesCheck}" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10,5,10,10" DockPanel.Dock="Top">
+                        <ItemsControl IsTabStop="False" Name="OtherTasksItems" ItemsSource="{Binding EditingGame.GameActions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="1" BorderBrush="{StaticResource NormalBrush}" CornerRadius="3" Padding="5" Margin="0,0,0,10">
+                                        <StackPanel Margin="10">
+                                            <pctrls:GameTaskView x:Name="TaskCustom" ShowNameRow="True"
+                                                            Emulators="{Binding Data.Emulators, Source={StaticResource Proxy}}"
+                                                            DefaultSelectionDir="{Binding Data.EditingGame.InstallDirectory, Mode=OneWay, Source={StaticResource Proxy}}"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,5,0">
+                                                <Button Name="ButtonMoveUpAction" FontFamily="Marlett" Content="5" Margin="0,0,5,0"
+                                                Command="{Binding Data.MoveUpActionCommand, Source={StaticResource Proxy}}"
+                                                CommandParameter="{Binding }"/>
+                                                <Button Name="ButtonMoveDownAction" FontFamily="Marlett" Content="6" Margin="0,0,5,0"
+                                                Command="{Binding Data.MoveDownActionCommand, Source={StaticResource Proxy}}"
+                                                CommandParameter="{Binding }"/>
+                                                <Button Name="ButtonDeleteAction" Content="{DynamicResource LOCDeleteAction}"
+                                                Command="{Binding Data.DeleteActionCommand, Source={StaticResource Proxy}}"
+                                                CommandParameter="{Binding }"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>                
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <ContentControl ContentTemplate="{StaticResource SectionHeaderTemplate}"
+                                    Content="{DynamicResource LOCScripts}"
+                                    Tag="{Binding ShowScriptsChangeNotif}" />
+                </TabItem.Header>
+                <DockPanel Margin="10,5,10,5">
+                    <Button Content="{DynamicResource LOCMenuHelpTitle}" DockPanel.Dock="Bottom" MinWidth="80"
+                            HorizontalAlignment="Left"
+                            Command="{x:Static pcmd:GlobalCommands.NavigateUrlCommand}"
+                            CommandParameter="{}{DocsRootUrl}/manual/features/scriptingSupport/scriptingSupportOverview.html" />
+                    <Grid DockPanel.Dock="Top" Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBox AcceptsReturn="True" Grid.Column="1" Grid.Row="0"
+                                 FontFamily="{DynamicResource MonospaceFontFamily}"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 VerticalScrollBarVisibility="Visible"
+                                 Text="{Binding EditingGame.PreScript, UpdateSourceTrigger=PropertyChanged}" />
+                        <StackPanel Grid.Column="0" Grid.Row="0">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                          IsChecked="{Binding UsePreScriptChanges}" />
+                                <TextBlock Text="{DynamicResource LOCPreScriptDescription}"
+                                           VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                          IsChecked="{Binding UsePreGlobalScriptChanges}" />
+                                <CheckBox Content="{DynamicResource LOCExecuteGlobalScript}"
+                                          IsChecked="{Binding EditingGame.UseGlobalPreScript}" />
+                            </StackPanel>
+                            <Button Content="{DynamicResource LOCTestScript}" HorizontalAlignment="Left"
+                                    Command="{Binding TestScriptCommand}"
+                                    CommandParameter="{Binding EditingGame.PreScript}"/>
+                        </StackPanel>
+
+                        <TextBox AcceptsReturn="True" Grid.Column="1" Grid.Row="1"
+                                 FontFamily="{DynamicResource MonospaceFontFamily}"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 VerticalScrollBarVisibility="Visible"
+                                 Text="{Binding EditingGame.GameStartedScript, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,10,0,10"/>
+                        <StackPanel Grid.Column="0" Grid.Row="1" Margin="0,10,10,10">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                      IsChecked="{Binding UseGameStartedScriptChanges}" />
+                                <TextBlock Text="{DynamicResource LOCGameStartedScriptDescription}"
+                                           VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UseGameStartedGlobalScriptChanges}" />
+                                <CheckBox Content="{DynamicResource LOCExecuteGlobalScript}"
+                                  IsChecked="{Binding EditingGame.UseGlobalGameStartedScript}" />
+                            </StackPanel>
+                            <Button Content="{DynamicResource LOCTestScript}" HorizontalAlignment="Left"
+                                    Command="{Binding TestScriptCommand}"
+                                    CommandParameter="{Binding EditingGame.GameStartedScript}"/>
+                        </StackPanel>
+
+                        <TextBox AcceptsReturn="True" Grid.Column="1" Grid.Row="2"
+                                 FontFamily="{DynamicResource MonospaceFontFamily}"
+                             HorizontalScrollBarVisibility="Auto"
+                             VerticalScrollBarVisibility="Visible"
+                             Text="{Binding EditingGame.PostScript, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Grid.Column="0" Grid.Row="2">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                      IsChecked="{Binding UsePostScriptChanges}" />
+                                <TextBlock Text="{DynamicResource LOCPostScriptDescription}"
+                                           VerticalAlignment="Center" Margin="0,0,10,0" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                <CheckBox Style="{StaticResource SaveChangesCheck}"
+                                  IsChecked="{Binding UsePostGlobalScriptChanges}" />
+                                <CheckBox Content="{DynamicResource LOCExecuteGlobalScript}"
+                                  IsChecked="{Binding EditingGame.UseGlobalPostScript}" />
+                            </StackPanel>
+                            <Button Content="{DynamicResource LOCTestScript}" HorizontalAlignment="Left"
+                                    Command="{Binding TestScriptCommand}"
+                                    CommandParameter="{Binding EditingGame.PostScript}"/>
+                        </StackPanel>
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Column="0" Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{StaticResource WindowPanelSeparatorBrush}">
+            <DockPanel KeyboardNavigation.TabNavigation="Local" LastChildFill="False" Margin="5">
+                <Button TabIndex="1" Name="ButtonDownload" Content="{DynamicResource LOCMenuDownloadMetadata}"
+                        DockPanel.Dock="Left" Style="{StaticResource BottomButton}"
+                        Visibility="{Binding IsSingleGameEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        pbeh:LeftClickContextMenuBehavior.Enabled="True">
+                    <Button.ContextMenu>
+                        <ContextMenu Placement="Top" MinWidth="{Binding PlacementTarget.ActualWidth, RelativeSource={RelativeSource Self}}"
+                                     ItemsSource="{Binding MetadataDownloadOptions}">
+                            <ContextMenu.Resources>
+                                <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                    <Setter Property="Command" Value="{Binding DownloadCommand}" />
+                                </Style>
+                            </ContextMenu.Resources>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <Button TabIndex="3" Name="ButtonCancel" Content="{DynamicResource LOCCancelLabel}" DockPanel.Dock="Right" IsCancel="True"
+                        Style="{StaticResource BottomButton}"
+                        Command="{Binding CancelCommand}"/>
+                <Button TabIndex="2" Name="ButtonOK" Content="{DynamicResource LOCSaveLabel}" DockPanel.Dock="Right" IsDefault="True"
+                        Style="{StaticResource BottomButton}"
+                        Command="{Binding ConfirmCommand}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</controls:WindowBase>

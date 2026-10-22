@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="TestPlugin.TestPluginSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestPlugin"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <TextBox Text="{Binding Settings.Option1, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top"/>
+        <Slider Value="{Binding Settings.Option2, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top"
+                Minimum="0" Maximum="1000"/>
+        <Button Content="test" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Command="{Binding TestCommand}"/>
+    </DockPanel>
+</UserControl>

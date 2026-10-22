@@ -1,0 +1,26 @@
+<!--
+  Used only by dev-build.ps1.
+  Replacement for ImplicitlyExpandNETStandardFacades from Microsoft.NET.Build.Extensions, whose
+  tasks ship only as .NET Core assemblies in the portable .NET SDK and can't be loaded by the
+  .NET Framework MSBuild from VS Build Tools. Adds the netstandard 2.0 facades to net46x projects.
+-->
+<Project>
+  <Target Name="GameroomExpandNETStandardFacades"
+          Condition="'$(GameroomFacadesDir)' != '' AND '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(_TargetFrameworkVersionWithoutV)' &lt; '4.7.1'"
+          BeforeTargets="_HandlePackageFileConflicts;ResolveAssemblyReferences">
+    <ItemGroup>
+      <_GameroomFacade Include="$(GameroomFacadesDir)\net462\lib\*.dll" />
+      <_GameroomFacade Include="$(GameroomFacadesDir)\net461\lib\*.dll"
+                       Exclude="@(_GameroomFacade->'$(GameroomFacadesDir)\net461\lib\%(FileName).dll')" />
+      <_GameroomFacadeName Include="@(_GameroomFacade->'%(FileName)')" />
+
+      <Reference Remove="@(_GameroomFacadeName)" />
+      <Reference Include="@(_GameroomFacade)">
+        <Private>false</Private>
+      </Reference>
+      <!-- Package conflict resolution runs after this target, so newer package versions (e.g. System.ValueTuple) still win
+           within a project. Projects sharing one output folder must be built so that the main apps copy last. -->
+      <ReferenceCopyLocalPaths Include="@(_GameroomFacade)" Condition="'%(FileName)' != 'netfx.force.conflicts'" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,71 @@
+﻿<c:WindowBase x:Class="Playnite.FullscreenApp.Windows.RandomGameSelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pin="clr-namespace:Playnite.Input;assembly=Playnite"
+        xmlns:pctrls="clr-namespace:Playnite.FullscreenApp.Controls"
+        xmlns:c="clr-namespace:Playnite.Controls;assembly=Playnite"
+        mc:Ignorable="d"
+        ShowMinimizeButton="False" ShowMaximizeButton="False" ShowCloseButton="False"
+        ShowInTaskbar="False" WindowStyle="None"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+        Style="{StaticResource ChildWindowStyle}"
+        d:DesignWidth="1920" d:DesignHeight="1080">
+
+    <c:WindowBase.InputBindings>
+        <pin:GameControllerInputBinding Button="{Binding Path=(pin:GameControllerGesture.CancellationBinding)}" Command="{Binding CloseCommand}" />
+        <KeyBinding Key="Backspace" Command="{Binding CloseCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding CloseCommand}" />
+    </c:WindowBase.InputBindings>
+
+    <Viewbox>
+        <Grid Height="1080" Width="1920" Name="GridMain">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Border Background="{StaticResource ControlBackgroundDarkBrush}" CornerRadius="3"
+                    Grid.Column="1" Grid.Row="1"
+                    KeyboardNavigation.TabNavigation="Cycle"
+                    KeyboardNavigation.DirectionalNavigation="Cycle">
+                <StackPanel Margin="20">
+                    <Image Stretch="Uniform" StretchDirection="Both" RenderOptions.BitmapScalingMode="Fant"
+                           Height="300" HorizontalAlignment="Center">
+                        <Image.Source>
+                            <PriorityBinding>
+                                <Binding Path="SelectedGame.CoverImage" Converter="{StaticResource ImageStringToImageConverterCached}" />
+                                <Binding Source="{StaticResource DefaultGameCover}" />
+                            </PriorityBinding>
+                        </Image.Source>
+                    </Image>
+                    
+                    <TextBlock Text="{Binding SelectedGame.Name}" HorizontalAlignment="Center" Margin="0,10,0,20" 
+                               Style="{StaticResource TextBlockBaseStyle}" 
+                               TextTrimming="CharacterEllipsis" />
+                    <pctrls:CheckBoxEx Content="{DynamicResource LOCRandomGameLimistToFilter}" HorizontalAlignment="Center"
+                                IsChecked="{Binding IsLimitedToFilter}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Center">
+                        <pctrls:ButtonEx Content="{DynamicResource LOCGameSearchItemActionSwitchTo}" MinWidth="200"
+                                         Style="{StaticResource MessageBoxButton}"
+                                         Command="{Binding NavigateToGameCommand}"/>
+                        <pctrls:ButtonEx Content="{DynamicResource LOCRandomGamePickAnother}" MinWidth="200"
+                                         Style="{StaticResource MessageBoxButton}"
+                                         Command="{Binding PickAnotherCommand}" />
+                    </StackPanel>
+                    <pctrls:ButtonEx Content="{DynamicResource LOCPlayGame}" HorizontalAlignment="Center"
+                                     x:Name="ButtonPlay" Margin="0,10,0,0"
+                                     Style="{StaticResource MessageBoxButton}"
+                                     Command="{Binding PlayGameCommand}" MinWidth="200" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Viewbox>
+</c:WindowBase>

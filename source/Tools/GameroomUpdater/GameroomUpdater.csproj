@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Standalone updater and web installer. Must stay a single exe without dependencies:
+       it copies itself to a temporary folder before replacing Gameroom's files. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>GameroomUpdater</AssemblyName>
+    <RootNamespace>Gameroom.Updater</RootNamespace>
+    <AssemblyTitle>Gameroom Updater</AssemblyTitle>
+    <Product>Gameroom</Product>
+    <UseWpf>true</UseWpf>
+    <LangVersion>12</LangVersion>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin</OutputPath>
+    <ApplicationIcon>..\..\Playnite.DesktopApp\Themes\Desktop\Default\Images\applogo.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Playnite\Gameroom\Updates\GameroomReleases.cs" Link="Shared\GameroomReleases.cs" />
+    <Resource Include="..\..\Playnite.DesktopApp\Themes\Desktop\Default\Images\applogo.png" Link="Resources\applogo.png" />
+  </ItemGroup>
+</Project>

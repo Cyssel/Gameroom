@@ -1,0 +1,492 @@
+﻿<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.MetadataComparisonWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        xmlns:pctrls="clr-namespace:Playnite.DesktopApp.Controls"
+        xmlns:pmrk="clr-namespace:Playnite.DesktopApp.Markup"
+        xmlns:dvm="clr-namespace:Playnite.DesktopApp.ViewModels;assembly=Gameroom"
+        mc:Ignorable="d"
+        Style="{DynamicResource StandardWindowStyle}"
+        Title="{DynamicResource LOCMedataDiffWindowTitle}" 
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Height="600" Width="800">
+    
+    <controls:WindowBase.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+            <Setter Property="Margin" Value="5,5,5,5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+    </controls:WindowBase.Resources>
+    
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource NormalBorderBrush}">
+            <DockPanel LastChildFill="False" Margin="5">
+                <Button Name="ButtonCancel" Content="{DynamicResource LOCCancelLabel}" DockPanel.Dock="Right"
+                        Style="{StaticResource BottomButton}" IsCancel="True"
+                        Command="{Binding CancelCommand}"/>
+                <Button Name="ButtonOK" Content="{DynamicResource LOCSelect}" DockPanel.Dock="Right" 
+                        Style="{StaticResource BottomButton}"
+                        Command="{Binding ConfirmCommand}"/>
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto">
+            <GridEx ColumnCount="3" StarColumns="1,2"
+                    Margin="5,0,5,0"
+                    RowCount="41" AutoLayoutColumns="3">
+                <Canvas />
+                <TextBlock Text="{DynamicResource LOCMetadataDiffCurrent}"  />
+                <TextBlock Text="{DynamicResource LOCMetadataDiffNew}"  />
+                
+                <Canvas />
+                <Button Content="{DynamicResource LOCSelectAll}" HorizontalAlignment="Left"
+                        Command="{Binding SelectAllCurrentCommand}" />
+                <Button Content="{DynamicResource LOCSelectAll}" HorizontalAlignment="Left"
+                        Command="{Binding SelectAllNewCommand}" />
+
+                <!--Name-->
+                <TextBlock Text="{DynamicResource LOCNameLabel}"
+                           Visibility="{Binding Name.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding Name.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"                             
+                             IsChecked="{Binding Name.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="Name">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.Name}" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding Name.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Name.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="Name">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.Name}" />
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--Release Date-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding ReleaseDate.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGameReleaseDateTitle}"
+                           Visibility="{Binding ReleaseDate.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding ReleaseDate.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding ReleaseDate.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="ReleaseDate">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.ReleaseDate}" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding ReleaseDate.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding ReleaseDate.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="ReleaseDate">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.ReleaseDate}" />
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--Genres-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Genres.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGenresLabel}"
+                           Visibility="{Binding Genres.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Genres.Current}"
+                              Visibility="{Binding Genres.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Genres.New}"
+                              Visibility="{Binding Genres.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Developers-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Developers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCDevelopersLabel}"
+                           Visibility="{Binding Developers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Developers.Current}"
+                              Visibility="{Binding Developers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Developers.New}"
+                              Visibility="{Binding Developers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Publishers-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Publishers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCPublishersLabel}"
+                           Visibility="{Binding Publishers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Publishers.Current}"
+                              Visibility="{Binding Publishers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Publishers.New}"
+                              Visibility="{Binding Publishers.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Features-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Features.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCFeaturesLabel}"
+                           Visibility="{Binding Features.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Features.Current}"
+                              Visibility="{Binding Features.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Features.New}"
+                              Visibility="{Binding Features.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Tags-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Tags.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCTagsLabel}"
+                           Visibility="{Binding Tags.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Tags.Current}"
+                              Visibility="{Binding Tags.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Tags.New}"
+                              Visibility="{Binding Tags.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Links-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Links.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCLinksLabel}"
+                           Visibility="{Binding Links.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Links.Current}"
+                              Visibility="{Binding Links.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}"
+                                      ToolTip="{Binding Item.Url}" ToolTipService.InitialShowDelay="0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Links.New}"
+                              Visibility="{Binding Links.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}"
+                                      ToolTip="{Binding Item.Url}" ToolTipService.InitialShowDelay="0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Age rating-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding AgeRatings.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCAgeRatingLabel}"
+                           Visibility="{Binding AgeRatings.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding AgeRatings.Current}"
+                              Visibility="{Binding AgeRatings.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding AgeRatings.New}"
+                              Visibility="{Binding AgeRatings.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Region-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Regions.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCRegionLabel}"
+                           Visibility="{Binding Regions.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Regions.Current}"
+                              Visibility="{Binding Regions.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Regions.New}"
+                              Visibility="{Binding Regions.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Series-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Series.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCSeriesLabel}"
+                           Visibility="{Binding Series.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Series.Current}"
+                              Visibility="{Binding Series.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Series.New}"
+                              Visibility="{Binding Series.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Platform-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Platforms.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGamePlatformTitle}"
+                           Visibility="{Binding Platforms.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl ItemsSource="{Binding Platforms.Current}"
+                              Visibility="{Binding Platforms.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Platforms.New}"
+                              Visibility="{Binding Platforms.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected}" Content="{Binding Item.Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--Description-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Description.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGameDescriptionTitle}"
+                           Visibility="{Binding Description.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding Description.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"                             
+                             IsChecked="{Binding Description.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="Description">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.Description}"
+                                   TextWrapping="Wrap" MaxHeight="150" TextTrimming="CharacterEllipsis" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding Description.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Description.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="Description">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.Description}"
+                                   TextWrapping="Wrap" MaxHeight="150" TextTrimming="CharacterEllipsis" />
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--CriticScore-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding CriticScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCCriticScore}"
+                           Visibility="{Binding CriticScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding CriticScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"                             
+                             IsChecked="{Binding CriticScore.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="CriticScore">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.CriticScore}" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding CriticScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding CriticScore.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="CriticScore">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.CriticScore}"  />
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--CommunityScore-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding CommunityScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCCommunityScore}"
+                           Visibility="{Binding CommunityScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding CommunityScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"                             
+                             IsChecked="{Binding CommunityScore.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="CommunityScore">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.CommunityScore}" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding CommunityScore.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding CommunityScore.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="CommunityScore">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.CommunityScore}"  />
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--InstallSize-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding InstallSize.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCInstallSizeLabel}"
+                           Visibility="{Binding InstallSize.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding InstallSize.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"                             
+                             IsChecked="{Binding InstallSize.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="InstallSize">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding CurrentGame.InstallSize, Converter={StaticResource NullableUlongBytesSizeToStringConverter}}" />
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding InstallSize.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding InstallSize.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="InstallSize">
+                    <RadioButton.Content>
+                        <TextBlock Text="{Binding NewGame.InstallSize, Converter={StaticResource NullableUlongBytesSizeToStringConverter}}"  />
+                    </RadioButton.Content>
+                </RadioButton>
+                
+                <!--Icon-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Icon.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGameIconTitle}"
+                           Visibility="{Binding Icon.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding Icon.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Icon.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="Icon">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding CurrentIcon}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="64"/>
+                            <TextBlock Text="{Binding CurrentIconDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding Icon.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Icon.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="Icon">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding NewIcon}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="64"/>
+                            <TextBlock Text="{Binding NewIconDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--Cover-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Cover.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock Text="{DynamicResource LOCGameCoverTitle}"
+                           Visibility="{Binding Cover.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding Cover.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Cover.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="Cover">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding CurrentCover}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="128"/>
+                            <TextBlock Text="{Binding CurrentCoverDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding Cover.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Cover.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="Cover">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding NewCover}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="128"/>
+                            <TextBlock Text="{Binding NewCoverDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+
+                <!--BackgroundImage-->
+                <Separator Grid.ColumnSpan="3"
+                           Visibility="{Binding Background.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"  />
+                <TextBlock Text="{DynamicResource LOCGameBackgroundTitle}"
+                           Visibility="{Binding Background.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <RadioButton Visibility="{Binding Background.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Background.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.Current}}"
+                             GroupName="Background">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding CurrentBackground}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="169"/>
+                            <TextBlock Text="{Binding CurrentBackgroundDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+                <RadioButton Visibility="{Binding Background.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsChecked="{Binding Background.Source, Converter={StaticResource EnumToBooleanConverter},ConverterParameter={x:Static dvm:MetadataChangeDataSource.New}}"
+                             GroupName="Background">
+                    <RadioButton.Content>
+                        <StackPanel>
+                            <Image Source="{Binding NewBackground}"
+                               Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant"
+                               HorizontalAlignment="Left" Height="169"/>
+                            <TextBlock Text="{Binding NewBackgroundDimensions}" />
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+            </GridEx>
+        </ScrollViewer>
+    </DockPanel>
+</controls:WindowBase>

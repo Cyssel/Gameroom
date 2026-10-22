@@ -1,0 +1,287 @@
+﻿using Playnite.Common;
+using Playnite.SDK;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace Playnite
+{
+    public static class Diagnostic
+    {
+        private static ILogger logger = LogManager.GetLogger();
+
+        private static List<string> GetPlayniteFilesList()
+        {
+            var progPath = PlaynitePaths.ProgramPath;
+            var allFiles = new List<string>();
+            foreach (var file in Directory.GetFiles(progPath, "*.*", SearchOption.TopDirectoryOnly))
+            {
+                try
+                {
+                    var fInfo = new FileInfo(file);
+                    allFiles.Add(fInfo.Name + ", " + fInfo.Length);
+                }
+                catch (Exception e) when (!PlayniteEnvironment.ThrowAllErrors)
+                {
+                    logger.Error(e, $"Failed to get information about Playnite file {file}");
+                }
+            }
+
+            return allFiles;
+        }
+
+        private static string GetManifestInfo(string rootDir, string manFileName)
+        {
+            if (!Directory.Exists(rootDir))
+            {
+                return string.Empty;
+            }
+
+            var total = new StringBuilder();
+            foreach (var dir in Directory.GetDirectories(rootDir))
+            {
+                var manifest = Path.Combine(dir, manFileName);
+                if (File.Exists(manifest))
+                {
+                    total.Append(Path.GetFileName(dir));
+                    total.AppendLine();
+                    total.AppendLine("--------------------------");
+                    total.Append(File.ReadAllText(manifest));
+                    total.AppendLine();
+                    total.AppendLine();
+                }
+            }
+
+            return total.ToString();
+        }
+
+        public static void CreateDiagPackage(string path, string userActionsDescription, DiagnosticPackageInfo packageInfo)
+        {
+            var diagTemp = Path.Combine(PlaynitePaths.TempPath, "diag");
+            FileSystem.CreateDirectory(diagTemp, true);
+            FileSystem.DeleteFile(path);
+
+            ZipFile.CreateFromDirectory(diagTemp, path);
+            using (FileStream zipToOpen = new FileStream(path, FileMode.Open))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                {
+                    // Package info
+                    var packagePath = Path.Combine(diagTemp, DiagnosticPackageInfo.PackageInfoFileName);
+                    File.WriteAllText(packagePath, Serialization.ToJson(packageInfo));
+                    archive.CreateEntryFromFile(packagePath, Path.GetFileName(packagePath));
+
+                    // Config
+                    if (Directory.Exists(PlaynitePaths.ConfigRootPath))
+                    {
+                        foreach (var cfg in Directory.GetFiles(PlaynitePaths.ConfigRootPath, "*.json"))
+                        {
+                            var fileInfo = new FileInfo(cfg);
+                            archive.CreateEntryFromFile(cfg, fileInfo.Name);
+                        }
+                    }
+
+                    // Extension configs
+                    if (Directory.Exists(PlaynitePaths.ExtensionsDataPath))
+                    {
+                        foreach (var cfg in Directory.GetFiles(PlaynitePaths.ExtensionsDataPath, "config.json", SearchOption.AllDirectories))
+                        {
+                            var fileInfo = new FileInfo(cfg);
+                            archive.CreateEntryFromFile(cfg, Path.Combine("extensions", fileInfo.Directory.Name, fileInfo.Name));
+                        }
+                    }
+
+                    // Installed extensions/themes
+                    try
+                    {
+                        var extensionsPath = Path.Combine(diagTemp, "extensions.txt");
+                        if (!PlayniteSettings.IsPortable)
+                        {
+                            File.AppendAllText(extensionsPath, "----- User data extensions: -----\n\n");
+                            File.AppendAllText(extensionsPath, GetManifestInfo(PlaynitePaths.ExtensionsUserDataPath, PlaynitePaths.ExtensionManifestFileName));
+                            File.AppendAllText(extensionsPath, GetManifestInfo(PlaynitePaths.ThemesUserDataPath, PlaynitePaths.ThemeManifestFileName));
+                        }
+
+                        File.AppendAllText(extensionsPath, "\n\n----- Program dir extensions: -----\n\n");
+                        File.AppendAllText(extensionsPath, GetManifestInfo(PlaynitePaths.ExtensionsProgramPath, PlaynitePaths.ExtensionManifestFileName));
+                        File.AppendAllText(extensionsPath, GetManifestInfo(PlaynitePaths.ThemesProgramPath, PlaynitePaths.ThemeManifestFileName));
+
+                        archive.CreateEntryFromFile(extensionsPath, Path.GetFileName(extensionsPath));
+                    }
+                    catch (Exception e) when (!PlayniteEnvironment.ThrowAllErrors)
+                    {
+                        logger.Error(e, "Failed to package extensions list.");
+                    }
+
+                    // System Info
+                    try
+                    {
+                        var infoPath = Path.Combine(diagTemp, "sysinfo.txt");
+                        File.WriteAllText(infoPath, Serialization.ToJson(Computer.GetSystemInfo(), true));
+                        archive.CreateEntryFromFile(infoPath, Path.GetFileName(infoPath));
+                    }
+                    catch (Exception e) when (!PlayniteEnvironment.ThrowAllErrors)
+                    {
+                        logger.Error(e, "Failed gather system info.");
+                    }
+
+                    // Playnite info
+                    var playnitePath = Path.Combine(diagTemp, "playniteInfo.txt");
+                    var playniteInfo = new Dictionary<string, object>
+                    {
+                        { "Version", Updater.CurrentVersion.ToString() },
+                        { "Portable", PlayniteSettings.IsPortable },
+                        { "Memory", (PlayniteProcess.WorkingSetMemory / 1024f) / 1024f },
+                        { "Path", PlayniteProcess.Path },
+                        { "Cmdline", PlayniteProcess.Cmdline },
+                        { "Elevated", PlayniteEnvironment.IsElevated },
+                        { "DesktopApp", FileSystem.GetSHA256(PlaynitePaths.DesktopExecutablePath) },
+                        { "FullscreenApp", FileSystem.GetSHA256(PlaynitePaths.FullscreenExecutablePath) },
+                        { "Playnite", FileSystem.GetSHA256(PlaynitePaths.PlayniteAssemblyPath) },
+                        { "SDK", FileSystem.GetSHA256(PlaynitePaths.PlayniteSDKAssemblyPath) }
+                    };
+
+                    File.WriteAllText(playnitePath, Serialization.ToJson(playniteInfo, true));
+                    archive.CreateEntryFromFile(playnitePath, Path.GetFileName(playnitePath));
+
+                    // Program file list
+                    try
+                    {
+                        var fileListPath = Path.Combine(diagTemp, "fileList.txt");
+                        File.WriteAllText(fileListPath, string.Join(Environment.NewLine, GetPlayniteFilesList()));
+                        archive.CreateEntryFromFile(fileListPath, Path.GetFileName(fileListPath));
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(e, "Failed to pack app file list.");
+                    }
+
+                    // User actions description
+                    if (!string.IsNullOrWhiteSpace(userActionsDescription))
+                    {
+                        var descriptionPath = Path.Combine(diagTemp, "userActions.txt");
+                        File.WriteAllText(descriptionPath, userActionsDescription);
+                        archive.CreateEntryFromFile(descriptionPath, Path.GetFileName(descriptionPath));
+                    }
+
+                    // Automatic crash dumps, only for manually created packages since caught crashes will already have necessary info included.
+                    if (!packageInfo.IsCrashPackage)
+                    {
+                        try
+                        {
+                            var crashDir = Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\CrashDumps");
+                            if (Directory.Exists(crashDir))
+                            {
+                                var dumps = Directory.GetFiles(crashDir).
+                                    Where(a => a.Contains("Playnite") && (DateTime.Now - new FileInfo(a).LastWriteTime).TotalHours <= 24).
+                                    GroupBy(a => Regex.Replace(a, @"\.\d+\.dmp", "", RegexOptions.IgnoreCase));
+
+                                foreach (var dumpGroup in dumps)
+                                {
+                                    var dump = dumpGroup.First();
+                                    archive.CreateEntryFromFile(dump, Path.Combine("dumps", Path.GetFileName(dump)));
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error(e, "Failed to collect crash dumps.");
+                        }
+                    }
+
+                    void addCefLog(string logPath, ZipArchive archiveObj)
+                    {
+                        try
+                        {
+                            var cefEntry = archive.CreateEntry(Path.GetFileName(logPath));
+                            using (var cefS = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                            using (var writer = new StreamWriter(cefEntry.Open()))
+                            {
+                                cefS.CopyTo(writer.BaseStream);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            logger.Error(e, "Failed to pack CEF log.");
+                        }
+                    }
+
+                    // Add log files
+                    foreach (var logFile in Directory.GetFiles(PlaynitePaths.ConfigRootPath, "*.log", SearchOption.TopDirectoryOnly))
+                    {
+                        if (Path.GetFileName(logFile) == "cef.log" || Path.GetFileName(logFile) == "debug.log")
+                        {
+                            addCefLog(logFile, archive);
+                        }
+                        else
+                        {
+                            archive.CreateEntryFromFile(logFile, Path.GetFileName(logFile));
+                        }
+                    }
+                }
+            }
+
+            FileSystem.DeleteDirectory(diagTemp);
+        }
+
+        public static void CreateLogPackage(string path)
+        {
+            FileSystem.DeleteFile(path);
+            using (FileStream zipToOpen = new FileStream(path, FileMode.Create))
+            using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+            {
+                foreach (var logFile in Directory.GetFiles(PlaynitePaths.ConfigRootPath, "*.log", SearchOption.TopDirectoryOnly))
+                {
+                    if (Path.GetFileName(logFile) == "cef.log" || Path.GetFileName(logFile) == "debug.log")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        archive.CreateEntryFromFile(logFile, Path.GetFileName(logFile));
+                    }
+                }
+            }
+        }
+
+        public static bool IsHResultCloudError(int hresult)
+        {
+            return hresult == unchecked((int)0x80070166) || // ERROR_CLOUD_FILE_SYNC_ROOT_METADATA_CORRUPT
+                   hresult == unchecked((int)0x8007016A) || // ERROR_CLOUD_FILE_PROVIDER_NOT_RUNNING
+                   hresult == unchecked((int)0x8007016B) || // ERROR_CLOUD_FILE_METADATA_CORRUPT
+                   hresult == unchecked((int)0x8007016C) || // ERROR_CLOUD_FILE_METADATA_TOO_LARGE
+                   hresult == unchecked((int)0x8007016D) || // ERROR_CLOUD_FILE_PROPERTY_BLOB_TOO_LARGE
+                   hresult == unchecked((int)0x8007016E) || // ERROR_CLOUD_FILE_PROPERTY_BLOB_CHECKSUM_MISMATCH
+                   hresult == unchecked((int)0x80070176) || // ERROR_CLOUD_FILE_TOO_MANY_PROPERTY_BLOBS
+                   hresult == unchecked((int)0x80070177) || // ERROR_CLOUD_FILE_PROPERTY_VERSION_NOT_SUPPORTED
+                   hresult == unchecked((int)0x80070179) || // ERROR_CLOUD_FILE_NOT_IN_SYNC
+                   hresult == unchecked((int)0x8007017A) || // ERROR_CLOUD_FILE_ALREADY_CONNECTED
+                   hresult == unchecked((int)0x8007017B) || // ERROR_CLOUD_FILE_NOT_SUPPORTED
+                   hresult == unchecked((int)0x8007017C) || // ERROR_CLOUD_FILE_INVALID_REQUEST
+                   hresult == unchecked((int)0x8007017D) || // ERROR_CLOUD_FILE_READ_ONLY_VOLUME
+                   hresult == unchecked((int)0x8007017E) || // ERROR_CLOUD_FILE_CONNECTED_PROVIDER_ONLY
+                   hresult == unchecked((int)0x8007017F) || // ERROR_CLOUD_FILE_VALIDATION_FAILED
+                   hresult == unchecked((int)0x80070182) || // ERROR_CLOUD_FILE_AUTHENTICATION_FAILED
+                   hresult == unchecked((int)0x80070183) || // ERROR_CLOUD_FILE_INSUFFICIENT_RESOURCES
+                   hresult == unchecked((int)0x80070184) || // ERROR_CLOUD_FILE_NETWORK_UNAVAILABLE
+                   hresult == unchecked((int)0x80070185) || // ERROR_CLOUD_FILE_UNSUCCESSFUL
+                   hresult == unchecked((int)0x80070186) || // ERROR_CLOUD_FILE_NOT_UNDER_SYNC_ROOT
+                   hresult == unchecked((int)0x80070187) || // ERROR_CLOUD_FILE_IN_USE
+                   hresult == unchecked((int)0x80070188) || // ERROR_CLOUD_FILE_PINNED
+                   hresult == unchecked((int)0x80070189) || // ERROR_CLOUD_FILE_REQUEST_ABORTED
+                   hresult == unchecked((int)0x8007018A) || // ERROR_CLOUD_FILE_PROPERTY_CORRUPT
+                   hresult == unchecked((int)0x8007018B) || // ERROR_CLOUD_FILE_ACCESS_DENIED
+                   hresult == unchecked((int)0x8007018C) || // ERROR_CLOUD_FILE_INCOMPATIBLE_HARDLINKS
+                   hresult == unchecked((int)0x8007018D) || // ERROR_CLOUD_FILE_PROPERTY_LOCK_CONFLICT
+                   hresult == unchecked((int)0x8007018E) || // ERROR_CLOUD_FILE_REQUEST_CANCELED
+                   hresult == unchecked((int)0x80070194) || // ERROR_CLOUD_FILE_PROVIDER_TERMINATED
+                   hresult == unchecked((int)0x800701AA) || // ERROR_CLOUD_FILE_REQUEST_TIMEOUT
+                   hresult == unchecked((int)0x800701B2) || // ERROR_CLOUD_FILE_DEHYDRATION_DISALLOWED
+                   hresult == unchecked((int)0x800701DB);   // ERROR_CLOUD_FILE_US_MESSAGE_TIMEOUT
+        }
+    }
+}

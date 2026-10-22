@@ -1,0 +1,121 @@
+<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.GameSavesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        mc:Ignorable="d"
+        Style="{DynamicResource StandardWindowStyle}"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Title="{Binding Title}" Height="650" Width="850" MinHeight="450" MinWidth="600"
+        ShowMinimizeButton="False">
+
+    <controls:WindowBase.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
+    </controls:WindowBase.Resources>
+
+    <DockPanel Margin="5">
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource NormalBorderBrush}">
+            <DockPanel LastChildFill="False">
+                <CheckBox DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center"
+                          Content="{DynamicResource LOCGameroomSavesDisableForGame}"
+                          IsChecked="{Binding AutoBackupDisabled}" />
+                <Button DockPanel.Dock="Right" Content="{DynamicResource LOCCloseLabel}" IsCancel="True"
+                        Style="{StaticResource BottomButton}" Command="{Binding CloseCommand}" />
+            </DockPanel>
+        </Border>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="{DynamicResource LOCGameroomSteamAppId}" VerticalAlignment="Center" />
+                <TextBox Width="120" Margin="10,0,0,0" VerticalAlignment="Center"
+                         ToolTip="{DynamicResource LOCGameroomSteamAppIdTooltip}"
+                         Text="{Binding SteamAppId, UpdateSourceTrigger=LostFocus}" />
+            </StackPanel>
+
+            <DockPanel Grid.Row="1" Margin="0,5,0,5">
+                <TextBlock Text="{DynamicResource LOCGameroomSavesLocations}" FontWeight="SemiBold" FontSize="15"
+                           VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{DynamicResource LOCGameroomSavesAddLocation}" Command="{Binding AddLocationCommand}" Padding="10,3" />
+                    <Button Content="{DynamicResource LOCGameroomSavesOpenLocation}" Margin="5,0,0,0" Padding="10,3"
+                            Command="{Binding OpenLocationCommand}" CommandParameter="{Binding SelectedLocation}" />
+                    <Button Content="{DynamicResource LOCGameroomSavesRemoveLocation}" Margin="5,0,0,0" Padding="10,3"
+                            Command="{Binding RemoveLocationCommand}" CommandParameter="{Binding SelectedLocation}" />
+                </StackPanel>
+            </DockPanel>
+
+            <Grid Grid.Row="2">
+                <ListView ItemsSource="{Binding Locations}" SelectedItem="{Binding SelectedLocation}" SelectionMode="Single"
+                          BorderThickness="{StaticResource ControlBorderThickness}" BorderBrush="{StaticResource NormalBorderBrush}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="35">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Enabled}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnPath}" Width="560">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path}" ToolTip="{Binding Template}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnSource}" Width="180"
+                                            DisplayMemberBinding="{Binding SourceText}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <TextBlock Text="{DynamicResource LOCGameroomSavesNoLocationsHint}" TextWrapping="Wrap"
+                           Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" Opacity="0.7"
+                           Visibility="{Binding HasNoLocations, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
+
+            <DockPanel Grid.Row="3" Margin="0,15,0,5">
+                <TextBlock Text="{DynamicResource LOCGameroomSavesBackups}" FontWeight="SemiBold" FontSize="15"
+                           VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="{DynamicResource LOCGameroomSavesBackupNow}" Command="{Binding BackupNowCommand}" Padding="10,3" />
+                    <Button Content="{DynamicResource LOCGameroomSavesRestore}" Margin="5,0,0,0" Padding="10,3"
+                            Command="{Binding RestoreCommand}" CommandParameter="{Binding SelectedBackup}" />
+                    <Button Content="{DynamicResource LOCGameroomSavesShowInFolder}" Margin="5,0,0,0" Padding="10,3"
+                            Command="{Binding ShowInFolderCommand}" CommandParameter="{Binding SelectedBackup}" />
+                    <Button Content="{DynamicResource LOCGameroomSavesDelete}" Margin="5,0,0,0" Padding="10,3"
+                            Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedBackup}" />
+                </StackPanel>
+            </DockPanel>
+
+            <ListView Grid.Row="4" ItemsSource="{Binding Backups}" SelectedItem="{Binding SelectedBackup}" SelectionMode="Single"
+                      BorderThickness="{StaticResource ControlBorderThickness}" BorderBrush="{StaticResource NormalBorderBrush}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnDate}" Width="200" DisplayMemberBinding="{Binding DateText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnType}" Width="200" DisplayMemberBinding="{Binding TypeText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnFiles}" Width="100" DisplayMemberBinding="{Binding FileCount}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnSize}" Width="120" DisplayMemberBinding="{Binding SizeText}" />
+                        <GridViewColumn Header="{DynamicResource LOCGameroomSavesColumnCloud}" Width="110">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="&#xE753;" FontFamily="Segoe MDL2 Assets" Foreground="{DynamicResource GlyphBrush}"
+                                               ToolTip="{DynamicResource LOCGameroomSavesInCloud}"
+                                               Visibility="{Binding InCloud, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</controls:WindowBase>

@@ -1,0 +1,111 @@
+<UserControl x:Class="Playnite.DesktopApp.Controls.SettingsSections.GameroomSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:pctrls="clr-namespace:Playnite.DesktopApp.Controls"
+             xmlns:pcon="clr-namespace:Playnite.Converters;assembly=Playnite"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="700">
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
+    </UserControl.Resources>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20">
+            <TextBlock Text="{DynamicResource LOCGameroomSettingsDetectionHeader}" FontWeight="SemiBold" FontSize="16" />
+            <Separator Margin="0,5,0,10" />
+
+            <CheckBox Name="CheckLiveDetection"
+                      Content="{DynamicResource LOCGameroomSettingsLiveDetection}"
+                      ToolTip="{DynamicResource LOCGameroomSettingsLiveDetectionTooltip}"
+                      IsChecked="{Binding Settings.Gameroom.LiveDetectionEnabled}" />
+
+            <StackPanel Margin="25,10,0,0" IsEnabled="{Binding IsChecked, ElementName=CheckLiveDetection}">
+                <CheckBox Content="{DynamicResource LOCGameroomSettingsNotifySessions}"
+                          IsChecked="{Binding Settings.Gameroom.NotifyDetectedSessions}" />
+
+                <CheckBox Name="CheckDetectUnknown" Margin="0,10,0,0"
+                          Content="{DynamicResource LOCGameroomSettingsDetectUnknown}"
+                          IsChecked="{Binding Settings.Gameroom.DetectUnknownGames}" />
+                <CheckBox Margin="25,10,0,0"
+                          IsEnabled="{Binding IsChecked, ElementName=CheckDetectUnknown}"
+                          Content="{DynamicResource LOCGameroomSettingsAutoAddUnknown}"
+                          IsChecked="{Binding Settings.Gameroom.AutoAddUnknownGames}" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <TextBlock Text="{DynamicResource LOCGameroomSettingsMinSession}" VerticalAlignment="Center" />
+                    <pctrls:NullIntNumericBox MinValue="0" MaxValue="3600" Margin="10,0,0,0" Width="50"
+                                              VerticalAlignment="Center"
+                                              Value="{Binding Settings.Gameroom.MinimumSessionLength}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock Text="{DynamicResource LOCGameroomSettingsInterval}" VerticalAlignment="Center" />
+                    <pctrls:NullIntNumericBox MinValue="2" MaxValue="60" Margin="10,0,0,0" Width="50"
+                                              VerticalAlignment="Center"
+                                              Value="{Binding Settings.Gameroom.DetectionInterval}" />
+                </StackPanel>
+
+                <TextBlock Text="{DynamicResource LOCGameroomSettingsIgnored}" Margin="0,15,0,5" />
+                <TextBox AcceptsReturn="True" Height="80" Width="500" HorizontalAlignment="Left"
+                         VerticalScrollBarVisibility="Auto"
+                         Text="{Binding Settings.Gameroom.IgnoredExecutables, Converter={pcon:ListToMultilineStringConverter}, UpdateSourceTrigger=LostFocus}" />
+            </StackPanel>
+
+            <CheckBox Margin="0,15,0,0" Content="{DynamicResource LOCGameroomSettingsDetectInstalled}"
+                      IsChecked="{Binding Settings.Gameroom.DetectInstalledGames}" />
+            <TextBlock Text="{DynamicResource LOCGameroomSettingsDetectInstalledHint}" Margin="25,5,0,0"
+                       TextWrapping="Wrap" Width="550" HorizontalAlignment="Left" Opacity="0.7" />
+            <Button Content="{DynamicResource LOCGameroomSettingsScanInstalledNow}" HorizontalAlignment="Left" Margin="25,10,0,0"
+                    Click="ScanInstalled_Click" />
+
+            <TextBlock Text="{DynamicResource LOCGameroomSettingsSavesHeader}" FontWeight="SemiBold" FontSize="16" Margin="0,30,0,0" />
+            <Separator Margin="0,5,0,10" />
+
+            <CheckBox Name="CheckSaveBackups"
+                      Content="{DynamicResource LOCGameroomSettingsSavesEnabled}"
+                      IsChecked="{Binding Settings.Gameroom.SaveBackupsEnabled}" />
+
+            <StackPanel Margin="25,10,0,0" IsEnabled="{Binding IsChecked, ElementName=CheckSaveBackups}">
+                <CheckBox Content="{DynamicResource LOCGameroomSettingsLearnSaves}"
+                          IsChecked="{Binding Settings.Gameroom.LearnSaveLocations}" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <TextBlock Text="{DynamicResource LOCGameroomSettingsBackupDir}" VerticalAlignment="Center" />
+                    <pctrls:PathSelectionBox Width="400" Margin="10,0,0,0"
+                                             ShowDirectorySelector="True" VerticalAlignment="Center"
+                                             ToolTip="{DynamicResource LOCGameroomSettingsBackupDirTooltip}"
+                                             Text="{Binding Settings.Gameroom.SaveBackupDirectory}" />
+                </StackPanel>
+                <TextBlock Text="{DynamicResource LOCGameroomSettingsBackupDirTooltip}" Margin="0,5,0,0"
+                           TextWrapping="Wrap" Width="550" HorizontalAlignment="Left" Opacity="0.7" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <TextBlock Text="{DynamicResource LOCGameroomSettingsMaxBackups}" VerticalAlignment="Center" />
+                    <pctrls:NullIntNumericBox MinValue="1" MaxValue="500" Margin="10,0,0,0" Width="50"
+                                              VerticalAlignment="Center"
+                                              Value="{Binding Settings.Gameroom.MaxBackupsPerGame}" />
+                </StackPanel>
+            </StackPanel>
+
+            <TextBlock Text="{DynamicResource LOCGameroomSettingsAchievementsHeader}" FontWeight="SemiBold" FontSize="16" Margin="0,30,0,0" />
+            <Separator Margin="0,5,0,10" />
+            <TextBlock Text="{DynamicResource LOCGameroomSettingsAchievementsInfo}" TextWrapping="Wrap" Width="550" HorizontalAlignment="Left" Opacity="0.7" />
+            <CheckBox Name="CheckAchievementOverlay" Margin="0,10,0,0"
+                      Content="{DynamicResource LOCGameroomSettingsAchievementOverlay}"
+                      IsChecked="{Binding Settings.Gameroom.AchievementOverlayEnabled}" />
+            <StackPanel Margin="25,10,0,0" IsEnabled="{Binding IsChecked, ElementName=CheckAchievementOverlay}">
+                <CheckBox Content="{DynamicResource LOCGameroomSettingsAchievementSound}"
+                          IsChecked="{Binding Settings.Gameroom.AchievementSoundEnabled}" />
+                <CheckBox Content="{DynamicResource LOCGameroomSettingsAchievementOverlaySteam}" Margin="0,10,0,0"
+                          IsChecked="{Binding Settings.Gameroom.AchievementOverlayForSteam}" />
+                <TextBlock Text="{DynamicResource LOCGameroomSettingsAchievementOverlayHint}" Margin="0,10,0,0"
+                           TextWrapping="Wrap" Width="550" HorizontalAlignment="Left" Opacity="0.7" />
+                <Button Content="{DynamicResource LOCGameroomSettingsAchievementTest}" HorizontalAlignment="Left" Margin="0,10,0,0"
+                        Click="TestAchievement_Click" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

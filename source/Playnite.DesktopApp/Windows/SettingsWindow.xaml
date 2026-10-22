@@ -1,0 +1,86 @@
+﻿<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="clr-namespace:Prism.Interactivity;assembly=Prism.Wpf"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        xmlns:p="clr-namespace:Playnite;assembly=Playnite"
+        mc:Ignorable="d"
+        d:DesignStyle="{StaticResource WindowDesignStyle}"
+        Style="{DynamicResource StandardWindowStyle}"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Width="800" Height="620" MinWidth="800" MinHeight="620"   
+        AutomationProperties.AutomationId="WindowSettings">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing" >
+            <prism:InvokeCommandAction Command="{Binding WindowClosingCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <controls:WindowBase.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
+        <x:Array Type="{x:Type sys:String}" x:Key="DummyArray">
+            <sys:String>Dummy</sys:String>
+        </x:Array>
+    </controls:WindowBase.Resources>
+
+    <DockPanel Margin="0,5,0,0">
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource WindowPanelSeparatorBrush}">
+            <DockPanel LastChildFill="False" Margin="5">
+                <TextBlock Text="{DynamicResource LOCSettingsRestartNotification}"
+                           Margin="5,0,0,0" DockPanel.Dock="Left" VerticalAlignment="Center"
+                           Style="{DynamicResource BaseTextBlockStyle}" />
+                <Button Name="ButtonCancel" Content="{DynamicResource LOCCancelLabel}" DockPanel.Dock="Right"
+                            Style="{StaticResource BottomButton}" IsCancel="True"
+                            Command="{Binding CancelCommand}"/>
+                <Button Name="ButtonOK" Content="{DynamicResource LOCSaveLabel}" DockPanel.Dock="Right" 
+                            Style="{StaticResource BottomButton}"
+                            Command="{Binding ConfirmCommand}"/>
+            </DockPanel>
+        </Border>
+
+        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource WindowPanelSeparatorBrush}"
+                DockPanel.Dock="Left">
+            <TreeView MinWidth="160" BorderThickness="0" ScrollViewer.CanContentScroll="False">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged" >
+                        <prism:InvokeCommandAction Command="{Binding SettingsTreeSelectedItemChangedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TreeViewItem Header="{DynamicResource LOCSettingsGeneralLabel}" IsSelected="True" Tag="{x:Static p:DesktopSettingsPage.General}" />
+                <TreeViewItem Header="{DynamicResource LOCGameroomSettingsTitle}" Tag="{x:Static p:DesktopSettingsPage.Gameroom}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsAppearanceLabel}" IsExpanded="True" Tag="{x:Static p:DesktopSettingsPage.AppearanceGeneral}">
+                    <TreeViewItem Header="{DynamicResource LOCSettingsGeneralLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceGeneral}" />
+                    <TreeViewItem Header="{DynamicResource LOCSettingsAdvancedLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceAdvanced}" />
+                    <TreeViewItem Header="{DynamicResource LOCDetailsViewLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceDetailsView}" />
+                    <TreeViewItem Header="{DynamicResource LOCGridViewLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceGridView}" />
+                    <TreeViewItem Header="{DynamicResource LOCListViewLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceListView}" />
+                    <TreeViewItem Header="{DynamicResource LOCSettingsLayoutLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceLayout}" />
+                    <TreeViewItem Header="{DynamicResource LOCSettingsTopPanelLabel}" Tag="{x:Static p:DesktopSettingsPage.AppearanceTopPanel}" />
+                </TreeViewItem>
+                <TreeViewItem Header="{DynamicResource LOCSettingsSearch}" Tag="{x:Static p:DesktopSettingsPage.Search}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsUpdating}" Tag="{x:Static p:DesktopSettingsPage.Updates}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsMetadataLabel}" Tag="{x:Static p:DesktopSettingsPage.Metadata}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsSortingLabel}" Tag="{x:Static p:DesktopSettingsPage.Sorting}" />
+                <TreeViewItem Header="{DynamicResource LOCScripts}" Tag="{x:Static p:DesktopSettingsPage.Scripting}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsAutoCloseSection}" Tag="{x:Static p:DesktopSettingsPage.ClientShutdown}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsImportExclusionList}" Tag="{x:Static p:DesktopSettingsPage.ImportExlusionList}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsBackup}" Tag="{x:Static p:DesktopSettingsPage.Backup}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsForDevelopers}" Tag="{x:Static p:DesktopSettingsPage.Development}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsInputLabel}" Tag="{x:Static p:DesktopSettingsPage.Input}" />
+                <TreeViewItem Header="{DynamicResource LOCSettingsAdvancedLabel}" Tag="{x:Static p:DesktopSettingsPage.GeneralAdvanced}" IsExpanded="True">
+                    <TreeViewItem Header="{DynamicResource LOCSettingsPerformanceLabel}" Tag="{x:Static p:DesktopSettingsPage.Performance}" />
+                </TreeViewItem>
+            </TreeView>
+        </Border>
+
+        <Border DockPanel.Dock="Left" BorderThickness="1,1,0,0"
+                BorderBrush="{StaticResource WindowPanelSeparatorBrush}">
+            <ContentControl Content="{Binding SelectedSectionView}"/>
+        </Border>
+    </DockPanel>
+</controls:WindowBase>

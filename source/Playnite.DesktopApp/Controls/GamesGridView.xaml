@@ -1,0 +1,539 @@
+﻿<UserControl x:Class="Playnite.DesktopApp.Controls.GamesGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:pcon="clr-namespace:Playnite.Converters;assembly=Playnite"
+             xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"
+             xmlns:pc="clr-namespace:Playnite.DesktopApp.Controls"
+             xmlns:p="clr-namespace:Playnite;assembly=Playnite"
+             xmlns:pmrk="clr-namespace:Playnite.DesktopApp.Markup"
+             xmlns:sdkm="clr-namespace:Playnite.SDK.Models;assembly=Playnite.SDK"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="502.764">
+    
+    <UserControl.Resources>
+        <pcon:NiceListToStringConverter x:Key="ListToStringConverter" />
+        <pcon:PlayTimeToStringConverter x:Key="PlayTimeToStringConverter" />
+        <pcon:NullableDateToStringConverter x:Key="NullableDateToStringConverter" />
+        <pcon:NullableUlongBytesSizeToStringConverter x:Key="NullableUlongBytesSizeToStringConverter" />
+        <pcon:DateTimeToLastPlayedConverter x:Key="DateTimeToLastPlayedConverter" />
+        <pcon:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+        <pcon:BoolToAutoWidthConverter x:Key="BoolToAutoWidthConverter" />        
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <pcon:InvertableBooleanToVisibilityConverter x:Key="InvertableBooleanToVisibilityConverter" />
+        <pcon:NullToDependencyPropertyUnsetConverter x:Key="NullToDependencyPropertyUnsetConverter" />
+        <pcon:ObjectToStringConverter x:Key="ObjectToStringConverter" />
+        <pcon:ValueConverterGroup x:Key="EnumCompVisibilityConverter">
+            <pcon:EnumToBooleanConverter/>
+            <pcon:BooleanToHiddenConverter />
+        </pcon:ValueConverterGroup>
+
+        <Style x:Key="TextItemStyle" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+
+        <Style x:Key="SortIndicator" TargetType="ContentControl" x:Shared="False">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="2,0,0,0" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock FontFamily="Marlett" Text="5"
+                       Visibility="{pmrk:Settings ViewSettings.SortingOrderDirection, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrderDirection.Ascending}}"/>
+                            <TextBlock FontFamily="Marlett" Text="6"
+                       Visibility="{pmrk:Settings ViewSettings.SortingOrderDirection, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrderDirection.Descending}}"/>
+                        </Grid>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <p:BindingProxy x:Key="MainProxy" Data="{Binding}" />
+
+        <DataTemplate x:Key="CellTemplateIcon">
+            <Image Width="20" Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="HighQuality">
+                <Image.Source>
+                    <PriorityBinding>
+                        <Binding Path="IconObjectCached" Mode="OneWay" 
+                                 IsAsync="{pmrk:Settings AsyncImageLoading, DirectValue=True}"
+                                 Converter="{StaticResource NullToDependencyPropertyUnsetConverter}" />
+                        <Binding Path="DefaultIconObjectCached" Mode="OneWay" />
+                    </PriorityBinding>
+                </Image.Source>
+            </Image>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateName">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameNameTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Name}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateName">
+            <TextBlock Text="{Binding DisplayName, Mode=OneWay}" Style="{StaticResource TextItemStyle}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplatePlatform">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGamePlatformTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Platforms}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplatePlatform">
+            <TextBlock Text="{Binding Platforms, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" Style="{StaticResource TextItemStyle}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateLibrary">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameProviderTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Library}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateLibrary">
+            <TextBlock Text="{Binding Library, Mode=OneWay}" Style="{StaticResource TextItemStyle}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateDevelopers">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameDevelopersTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Developers}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateDevelopers">
+            <TextBlock Text="{Binding Developers, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplatePublishers">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGamePublishersTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Publishers}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplatePublishers">
+            <TextBlock Text="{Binding Publishers, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateReleaseDate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameReleaseDateTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.ReleaseDate}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateReleaseDate">
+            <TextBlock Text="{Binding ReleaseDate, Mode=OneWay, Converter={StaticResource ReleaseDateToStringConverter}, ConverterParameter={pmrk:Settings DateTimeFormatReleaseDate, DirectValue=True}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateGenres">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameGenresTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Genres}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateGenres">
+            <TextBlock Text="{Binding Genres, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateCategories">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameCategoriesTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Categories}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateCategories">
+            <TextBlock Text="{Binding Categories, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateFeatures">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCFeaturesLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Features}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateFeatures">
+            <TextBlock Text="{Binding Features, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateTags">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameTagsTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Tags}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateTags">
+            <TextBlock Text="{Binding Tags, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateIsInstalled">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameIsInstalledTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.IsInstalled}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateIsInstalled">
+            <TextBlock Text="{Binding IsInstalled, Mode=OneWay, Converter={StaticResource BoolToYesNoConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateInstallDirectory">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameInstallDirTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.InstallDirectory}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateInstallDirectory">
+            <TextBlock Text="{Binding InstallDirectory, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateLastActivity">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameLastActivityTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.LastActivity}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateLastActivity">
+            <TextBlock Text="{Binding LastActivity, Mode=OneWay, Converter={StaticResource DateTimeToLastPlayedConverter}, ConverterParameter={pmrk:Settings DateTimeFormatLastPlayed, DirectValue=True}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateRecentActivity">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCRecentActivityLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.RecentActivity}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateRecentActivity">
+            <TextBlock Text="{Binding RecentActivity, Mode=OneWay, Converter={StaticResource NullableDateToStringConverter}, ConverterParameter={pmrk:Settings DateTimeFormatRecentActivity, DirectValue=True}}" />
+        </DataTemplate>
+        
+        <DataTemplate x:Key="HeaderTemplatePlaytime">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCTimePlayed}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Playtime}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplatePlaytime">
+            <TextBlock Text="{Binding Playtime, Mode=OneWay, Converter={StaticResource PlayTimeToStringConverter}, ConverterParameter={pmrk:Settings PlaytimeUseDaysFormat, DirectValue=True}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplatePlayCount">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCPlayCountLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.PlayCount}}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="HeaderTemplateInstallSize">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCInstallSizeLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.InstallSize}}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="CellTemplateRoms">
+            <TextBlock Text="{Binding RomList, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateRoms">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCGameROMTitle}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.InstallSize}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateInstallSize">
+            <TextBlock Text="{Binding InstallSize, Mode=OneWay, Converter={StaticResource NullableUlongBytesSizeToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplatePlayCount">
+            <TextBlock Text="{Binding PlayCount, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateCompletionStatus">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCCompletionStatus}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.CompletionStatus}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateCompletionStatus">
+            <TextBlock Text="{Binding CompletionStatus, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateSeries">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCSeriesLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Series}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateSeries">
+            <TextBlock Text="{Binding Series, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateVersion">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCVersionLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Version}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateVersion">
+            <TextBlock Text="{Binding Version, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateAgeRating">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCAgeRatingLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.AgeRatings}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateAgeRating">
+            <TextBlock Text="{Binding AgeRatings, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateRegion">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCRegionLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Regions}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateRegion">
+            <TextBlock Text="{Binding Regions, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateSource">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCSourceLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Source}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateSource">
+            <TextBlock Text="{Binding Source, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateAdded">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCAddedLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Added}}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="CellTemplateAdded">
+            <TextBlock Text="{Binding Added, Mode=OneWay, Converter={StaticResource NullableDateToStringConverter}, ConverterParameter={pmrk:Settings DateTimeFormatAdded, DirectValue=True}}" />
+        </DataTemplate>
+        
+        <DataTemplate x:Key="HeaderTemplateModified">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCModifiedLabel}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.Modified}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateModified">
+            <TextBlock Text="{Binding Modified, Mode=OneWay, Converter={StaticResource NullableDateToStringConverter}, ConverterParameter={pmrk:Settings DateTimeFormatModified, DirectValue=True}}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateUserScore">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCUserScore}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.UserScore}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateUserScore">
+            <TextBlock Text="{Binding UserScore, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateCriticScore">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCCriticScore}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.CriticScore}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateCriticScore">
+            <TextBlock Text="{Binding CriticScore, Mode=OneWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="HeaderTemplateCommunityScore">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource LOCCommunityScore}" />
+                <ContentControl Style="{StaticResource SortIndicator}"
+                                Visibility="{pmrk:Settings ViewSettings.SortingOrder, Converter={StaticResource EnumCompVisibilityConverter}, ConverterParameter={x:Static sdkm:SortOrder.CommunityScore}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CellTemplateCommunityScore">
+            <TextBlock Text="{Binding CommunityScore, Mode=OneWay}" />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ListView x:Name="GridGames" SelectionMode="Extended" BorderThickness="0"
+              DataContext="{Binding AppSettings.ViewSettings, RelativeSource={RelativeSource AncestorType=UserControl}}"
+              ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=UserControl}}"
+              VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+              VirtualizingPanel.CacheLengthUnit="Item" VirtualizingPanel.CacheLength="5"
+              VirtualizingPanel.ScrollUnit="Pixel"
+              pbeh:ScrollToSelectedBehavior.Enabled="True">
+        <ListView.Resources>
+            <p:BindingProxy x:Key="SettingsProxy" Data="{Binding}" />
+            <p:BindingProxy x:Key="GridGamesProxy" Data="{Binding ElementName=GridGames}" />
+        </ListView.Resources>
+        <ListView.InputBindings>
+            <KeyBinding Command="{Binding Data.EditSelectedGamesCommand, Source={StaticResource MainProxy}}"
+                        Key ="{Binding Data.EditSelectedGamesCommand.Gesture.Key, Source={StaticResource MainProxy}}"
+                        Modifiers="{Binding Data.EditSelectedGamesCommand.Gesture.Modifiers, Source={StaticResource MainProxy}}" />
+            <KeyBinding Command="{Binding Data.RemoveSelectedGamesCommand, Source={StaticResource MainProxy}}"
+                        Key ="{Binding Data.RemoveSelectedGamesCommand.Gesture.Key, Source={StaticResource MainProxy}}"
+                        Modifiers="{Binding Data.RemoveSelectedGamesCommand.Gesture.Modifiers, Source={StaticResource MainProxy}}" />
+            <KeyBinding Command="{Binding Data.StartSelectedGameCommand, Source={StaticResource MainProxy}}"
+                        Key ="{Binding Data.StartSelectedGameCommand.Gesture.Key, Source={StaticResource MainProxy}}"
+                        Modifiers="{Binding Data.StartSelectedGameCommand.Gesture.Modifiers, Source={StaticResource MainProxy}}" />
+        </ListView.InputBindings>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                <Setter Property="ContextMenu">
+                    <Setter.Value>
+                        <pc:GameMenu DataContext="{Binding Data.SelectedItems, Source={StaticResource GridGamesProxy}}"
+                                     ShowStartSection="True"/>
+                    </Setter.Value>
+                </Setter>
+                <EventSetter Event="MouseDoubleClick" Handler="Grid_MouseDoubleClick" />
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding IsInstalled}" Value="False" />
+                            <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="Foreground" Value="{StaticResource TextBrushDarker}" />
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.GroupStyle>
+            <GroupStyle ContainerStyle="{StaticResource ListViewGroupStyle}"/>
+        </ListView.GroupStyle>
+
+        <ListView.View>
+            <GridView x:Name="ActualGridView">
+                <GridView.ColumnHeaderContainerStyle>
+                    <Style TargetType="GridViewColumnHeader" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">                        
+                        <EventSetter Event="Click" Handler="GridViewColumnHeader_Click" />
+                    </Style>                        
+                </GridView.ColumnHeaderContainerStyle>
+                <GridView.ColumnHeaderContextMenu>
+                    <ContextMenu Name="HeaderMenu"
+                                 DataContext="{Binding Data, Source={StaticResource SettingsProxy}}">
+                        <MenuItem Header="{DynamicResource LOCGameIconTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Icon.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameNameTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Name.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGamePlatformTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Platform.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameProviderTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.PluginId.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameDevelopersTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Developers.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGamePublishersTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Publishers.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameReleaseDateTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.ReleaseDate.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameGenresTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Genres.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameCategoriesTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Categories.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCFeaturesLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Features.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameTagsTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Tags.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameIsInstalledTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.IsInstalled.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameInstallDirTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.InstallDirectory.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCInstallSizeLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.InstallSize.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameROMTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Roms.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCGameLastActivityTitle}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.LastActivity.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCRecentActivityLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.RecentActivity.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCTimePlayed}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Playtime.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCPlayCountLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.PlayCount.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCCompletionStatus}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.CompletionStatus.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCSeriesLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Series.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCVersionLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Version.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCAgeRatingLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.AgeRating.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCRegionLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Region.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCSourceLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Source.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCAddedLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Added.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCModifiedLabel}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.Modified.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCUserScore}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.UserScore.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCCriticScore}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.CriticScore.Visible}" />
+                        <MenuItem Header="{DynamicResource LOCCommunityScore}"
+                                    IsCheckable="True" IsChecked="{Binding ListViewColumns.CommunityScore.Visible}" />
+                    </ContextMenu>
+                </GridView.ColumnHeaderContextMenu>
+            </GridView>
+        </ListView.View>
+    </ListView>
+</UserControl>

@@ -1,0 +1,51 @@
+﻿<controls:WindowBase x:Class="Playnite.DesktopApp.Windows.ActionSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Playnite.Controls;assembly=Playnite"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="clr-namespace:Prism.Interactivity;assembly=Prism.Wpf"
+        xmlns:pmrk="clr-namespace:Playnite.DesktopApp.Markup"
+        xmlns:pcmd="clr-namespace:Playnite.Commands;assembly=Playnite"
+        xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"
+        mc:Ignorable="d"
+        Style="{DynamicResource StandardWindowStyle}"
+        Title="{DynamicResource LOCSelectActionTitle}"
+        WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight"
+        d:DesignHeight="200" d:DesignWidth="350" MinWidth="300" MaxHeight="700"
+        ShowMinimizeButton="False" ShowMaximizeButton="False"
+        AutomationProperties.AutomationId="WindowActionSelection"
+        Name="WindowActionSelectionWindow">
+
+    <controls:WindowBase.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
+    </controls:WindowBase.InputBindings>
+
+    <ItemsControl ItemsSource="{Binding Actions}" Margin="20,15,25,25"
+                  Focusable="False">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Background="Transparent" HorizontalContentAlignment="Left" BorderThickness="0"
+                        Command="{Binding DataContext.PlaySpecificCommand, ElementName=WindowActionSelectionWindow}"
+                        CommandParameter="{Binding Item}"
+                        pbeh:FocusBahaviors.FocusBinding="{Binding Selected, Mode=OneWay}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Margin="10,10,10,5">
+                            <TextBlock Text="&#xec74;" FontFamily="{StaticResource FontIcoFont}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Item.Name}" VerticalAlignment="Center" Margin="5,0,0,0" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>                
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.Template>
+            <ControlTemplate>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                              Focusable="False">
+                    <ItemsPresenter />
+                </ScrollViewer>
+            </ControlTemplate>
+        </ItemsControl.Template>
+    </ItemsControl>
+</controls:WindowBase>

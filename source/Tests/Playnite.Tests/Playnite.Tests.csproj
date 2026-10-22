@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <Platforms>x86</Platforms>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" version="4.3.1"/>
+    <PackageReference Include="DynamicLanguageRuntime" version="1.2.1"/>
+    <PackageReference Include="LiteDB" version="4.1.4"/>
+    <PackageReference Include="Moq" version="4.10.1"/>
+    <PackageReference Include="Newtonsoft.Json" version="10.0.3"/>
+    <PackageReference Include="NUnit" version="3.13.2"/>
+    <PackageReference Include="NUnit3TestAdapter" version="3.17.0"/>
+    <PackageReference Include="System.IO.Abstractions" version="2.1.0.227"/>
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" version="2.1.0.227"/>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" version="4.5.3"/>
+    <PackageReference Include="System.Threading.Tasks.Extensions" version="4.5.1"/>
+    <PackageReference Include="System.ValueTuple" version="4.5.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TestApp\TestAppProcInfo.cs" Link="_TestTools\TestAppProcInfo.cs" /> 
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\testgamelibrary\extension.yaml">
+      <Link>Resources\extension.yaml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="icon_dark.png" />
+    <None Include="Resources\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Playnite\Localization\LocSource.xaml">
+      <Link>Localization\LocSource.xaml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Playnite\Localization\zh_CN.xaml">
+      <Link>Localization\zh_CN.xaml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PlayniteSDK\Playnite.SDK.csproj" />
+    <ProjectReference Include="..\..\Playnite\Playnite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Management.Automation">
+      <HintPath>c:\Windows\Microsoft.Net\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command='xcopy "$(SolutionDir)\Tests\TestGameLibrary\bin\$(Configuration)\$(TargetFramework)\" "$(OutDir)\Extensions\TestGameLibrary\" /e /y /exclude:$(SolutionDir)\..\build\ExtensionsRefIgnoreList.txt' />
+    <Exec Command='xcopy "$(SolutionDir)\Tests\TestPlugin\bin\$(Configuration)\$(TargetFramework)\" "$(OutDir)\Extensions\TestPlugin\" /e /y /exclude:$(SolutionDir)\..\build\ExtensionsRefIgnoreList.txt' />
+    <Exec Command='xcopy "$(SolutionDir)\Tests\TestApp\bin\$(Configuration)\$(TargetFramework)\" "$(OutDir)\TestApp\" /e /y' />
+  </Target>
+  
+</Project>

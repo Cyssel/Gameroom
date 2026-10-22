@@ -1,0 +1,44 @@
+﻿<local:SettingsSectionControl x:Class="Playnite.FullscreenApp.Controls.SettingsSections.Input"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Playnite.FullscreenApp.Controls.SettingsSections"
+             xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"
+             xmlns:pctrls="clr-namespace:Playnite.FullscreenApp.Controls"
+             mc:Ignorable="d"             
+             d:DesignHeight="550" d:DesignWidth="800">
+    <StackPanel>
+        <StackPanel.Resources>
+            <Style TargetType="pctrls:CheckBoxEx" BasedOn="{StaticResource SettingsSectionCheckbox}" />
+        </StackPanel.Resources>
+        <pctrls:CheckBoxEx x:Name="ToggleMouseCursor"
+                           pbeh:FocusBahaviors.OnVisibilityFocus="True"
+                           Content="{DynamicResource LOCSettingsHideMouseCursor}"  />
+        <pctrls:CheckBoxEx x:Name="ToggleSwapXA"
+                           IsEnabled="{Binding IsChecked, ElementName=ToggleControllerInput}"
+                           Content="{DynamicResource LOCSettingsSwapMainViewXAButtons}"
+                           Tag="{DynamicResource LOCSettingsSwapMainViewXAButtonsDescriptions}"/>
+        <pctrls:CheckBoxEx x:Name="ToggleSwapConfirmCancel"
+                           IsEnabled="{Binding IsChecked, ElementName=ToggleControllerInput}"
+                           Content="{DynamicResource LOCSettingsSwapConfirmCancelButtons}"
+                           Tag="{DynamicResource LOCSettingsSwapConfirmCancelButtonsDescriptions}"/>
+        <pctrls:CheckBoxEx x:Name="ToggleGuideFocus"
+                           IsEnabled="{Binding IsChecked, ElementName=ToggleControllerInput}"
+                           Content="{DynamicResource LOCSettingsRefocusOnGuidButton}"/>
+        <pctrls:CheckBoxEx x:Name="ToggleGuideFocusOnlyWhenNoGame" Padding="50,0,0,0"
+                           IsEnabled="{Binding IsChecked, ElementName=ToggleControllerInput}"
+                           Content="{DynamicResource LOCSettingsRefocusOnGuidButtonOnlyWhenNoGame}"/>
+        <DockPanel Margin="0,20,0,10">
+            <TextBlock Text="{DynamicResource LOCGameListNavigationSpeed}"
+                       Style="{DynamicResource SettingsSectionText}"/>
+            <pctrls:SliderEx x:Name="SliderNavigationSpeed"
+                             DockPanel.Dock="Right" Margin="25,0,0,0"/>
+        </DockPanel>
+        <pctrls:CheckBoxEx x:Name="ToggleControllerInput"
+                           Content="{DynamicResource LOCSettingsXInputProcessing}"
+                           Tag="{DynamicResource LOCSettingsXInputProcessingDescription}"/>
+        <StackPanel Name="StackControllers" Margin="50,0,0,0"
+                    IsEnabled="{Binding IsChecked, ElementName=ToggleControllerInput}" />
+    </StackPanel>
+</local:SettingsSectionControl>

@@ -1,0 +1,238 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Resources of Gameroom's own views (Home, Account). Loaded with every theme, so these views
+         keep their look with third party Playnite themes too. -->
+
+    <Color x:Key="GameroomAccentStartColor">#8B5CF6</Color>
+    <Color x:Key="GameroomAccentEndColor">#3B82F6</Color>
+
+    <LinearGradientBrush x:Key="GameroomAccentBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource GameroomAccentStartColor}" Offset="0" />
+        <GradientStop Color="{StaticResource GameroomAccentEndColor}" Offset="1" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="GameroomTextBrush" Color="#F4F4FB" />
+    <SolidColorBrush x:Key="GameroomMutedTextBrush" Color="#A4A8C8" />
+    <SolidColorBrush x:Key="GameroomAccentTextBrush" Color="#B4A8FF" />
+    <SolidColorBrush x:Key="GameroomCardBrush" Color="#B3171833" />
+    <SolidColorBrush x:Key="GameroomCardHoverBrush" Color="#D9232551" />
+    <SolidColorBrush x:Key="GameroomCardBorderBrush" Color="#1FFFFFFF" />
+    <SolidColorBrush x:Key="GameroomInputBrush" Color="#0F1024" />
+    <SolidColorBrush x:Key="GameroomErrorBrush" Color="#FF7A8A" />
+    <SolidColorBrush x:Key="GameroomSuccessBrush" Color="#7EE2A8" />
+
+    <FontFamily x:Key="GameroomIconFont">Segoe MDL2 Assets</FontFamily>
+    <FontFamily x:Key="GameroomFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+
+    <!-- Sidebar icons -->
+    <TextBlock x:Key="SidebarHomeIcon" Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" />
+    <TextBlock x:Key="SidebarAccountIcon" Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" />
+
+    <Style x:Key="GameroomText" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource GameroomTextBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource GameroomFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <Style x:Key="GameroomMutedText" TargetType="TextBlock" BasedOn="{StaticResource GameroomText}">
+        <Setter Property="Foreground" Value="{StaticResource GameroomMutedTextBrush}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="GameroomSectionTitle" TargetType="TextBlock" BasedOn="{StaticResource GameroomText}">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <Style x:Key="GameroomCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource GameroomCardBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GameroomCardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="18,16" />
+    </Style>
+
+    <Style x:Key="GameroomPrimaryButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="{StaticResource GameroomFont}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="22,9" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background" Value="{StaticResource GameroomAccentBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Root">
+                        <Border x:Name="Glow" CornerRadius="8" Background="{TemplateBinding Background}" Opacity="0">
+                            <Border.Effect>
+                                <BlurEffect Radius="16" />
+                            </Border.Effect>
+                        </Border>
+                        <Border CornerRadius="8" Background="{TemplateBinding Background}" />
+                        <Border x:Name="Shine" CornerRadius="8" Background="White" Opacity="0" />
+                        <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.65" />
+                            <Setter TargetName="Shine" Property="Opacity" Value="0.08" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Shine" Property="Opacity" Value="0.18" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomSecondaryButton" TargetType="Button" BasedOn="{StaticResource GameroomPrimaryButton}">
+        <Setter Property="Background" Value="#26FFFFFF" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+
+    <Style x:Key="GameroomLinkButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource GameroomAccentTextBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource GameroomFont}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter x:Name="Content" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomTab" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource GameroomMutedTextBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource GameroomFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Margin="0,0,24,0">
+                        <ContentPresenter Margin="0,0,0,6" />
+                        <Border x:Name="Underline" Height="3" CornerRadius="1.5" Background="{StaticResource GameroomAccentBrush}" Visibility="Hidden" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Underline" Property="Visibility" Value="Visible" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomInputBorder" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource GameroomInputBrush}" />
+        <Setter Property="BorderBrush" Value="#33FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="Height" Value="40" />
+    </Style>
+
+    <Style x:Key="GameroomInputText" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource GameroomTextBrush}" />
+        <Setter Property="CaretBrush" Value="White" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomInputPassword" TargetType="PasswordBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource GameroomTextBrush}" />
+        <Setter Property="CaretBrush" Value="White" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomToggle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource GameroomTextBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal">
+                        <Border x:Name="Track" Width="38" Height="20" CornerRadius="10" Background="#33FFFFFF" VerticalAlignment="Center">
+                            <Ellipse x:Name="Knob" Width="14" Height="14" Fill="White" HorizontalAlignment="Left" Margin="3,0" />
+                        </Border>
+                        <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{StaticResource GameroomAccentBrush}" />
+                            <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GameroomProgressBar" TargetType="ProgressBar">
+        <Setter Property="Height" Value="8" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Grid>
+                        <Border x:Name="PART_Track" CornerRadius="4" Background="#26FFFFFF" />
+                        <Border x:Name="PART_Indicator" CornerRadius="4" HorizontalAlignment="Left" Background="{StaticResource GameroomAccentBrush}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Achievement icon with rounded corners, used as ContentTemplate of a sized ContentControl whose content has an IconPath. -->
+    <DataTemplate x:Key="GameroomAchievementIcon">
+        <Grid>
+            <Grid.OpacityMask>
+                <VisualBrush>
+                    <VisualBrush.Visual>
+                        <Border Width="64" Height="64" CornerRadius="9" Background="Black" />
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </Grid.OpacityMask>
+            <Border Background="#2A2550" />
+            <TextBlock Text="&#xE734;" FontFamily="{StaticResource GameroomIconFont}" FontSize="22" Foreground="{StaticResource GameroomAccentTextBrush}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Image Source="{Binding IconPath, Converter={StaticResource ImageStringToImageConverterCached}}"
+                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

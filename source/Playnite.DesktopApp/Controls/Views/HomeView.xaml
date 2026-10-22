@@ -1,0 +1,535 @@
+<UserControl x:Class="Playnite.DesktopApp.Controls.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="900" d:DesignWidth="1300"
+             Background="{DynamicResource WindowBackgourndBrush}">
+
+    <UserControl.Resources>
+        <!-- Cover with play button, used by the smaller rows -->
+        <DataTemplate x:Key="GameCoverTemplate">
+            <Button Command="{Binding OpenCommand}" Cursor="Hand" Margin="0,0,16,20" Width="138" ToolTip="{Binding Name}" Focusable="False">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <StackPanel Background="Transparent">
+                            <Grid Width="138" Height="192" RenderTransformOrigin="0.5,0.5" x:Name="Cover">
+                                <Grid.RenderTransform>
+                                    <ScaleTransform x:Name="CoverScale" />
+                                </Grid.RenderTransform>
+                                <Grid.OpacityMask>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Border Width="138" Height="192" CornerRadius="10" Background="Black" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Grid.OpacityMask>
+                                <Border Background="{StaticResource GameroomCardBrush}" />
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource GameroomMutedText}" TextWrapping="Wrap"
+                                           TextAlignment="Center" VerticalAlignment="Center" Margin="12" />
+                                <Image Source="{Binding CoverImage, Converter={StaticResource ImageStringToImageConverterCached}, IsAsync=True}"
+                                       Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
+                                <Border x:Name="Shade" Background="#80000000" Opacity="0" />
+                                <Button x:Name="PlayButton" Command="{Binding PlayCommand}" Opacity="0" Cursor="Hand"
+                                        Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid>
+                                                <Ellipse Fill="{StaticResource GameroomAccentBrush}" />
+                                                <TextBlock Text="&#xE768;" FontFamily="{StaticResource GameroomIconFont}" FontSize="18"
+                                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0,0,0" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <Border x:Name="Outline" CornerRadius="10" BorderThickness="2" BorderBrush="{StaticResource GameroomAccentBrush}" Opacity="0" />
+                            </Grid>
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource GameroomText}" Margin="2,9,2,0" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding Subtitle}" Style="{StaticResource GameroomMutedText}" Margin="2,2,2,0" FontSize="12" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Shade" Property="Opacity" Value="1" />
+                                <Setter TargetName="PlayButton" Property="Opacity" Value="1" />
+                                <Setter TargetName="Outline" Property="Opacity" Value="1" />
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CoverScale" Storyboard.TargetProperty="ScaleX" To="1.04" Duration="0:0:0.12" />
+                                            <DoubleAnimation Storyboard.TargetName="CoverScale" Storyboard.TargetProperty="ScaleY" To="1.04" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CoverScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.12" />
+                                            <DoubleAnimation Storyboard.TargetName="CoverScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </DataTemplate>
+
+        <!-- Carousel tile: grows and glows when selected, like a console home screen -->
+        <DataTemplate x:Key="CarouselTileTemplate">
+            <Grid Width="146" Height="214" Margin="0,0,14,0" VerticalAlignment="Bottom">
+                <Button Command="{Binding OpenCommand}" Cursor="Hand" Focusable="False" MouseEnter="Tile_MouseEnter" MouseLeave="Tile_MouseLeave"
+                        VerticalAlignment="Bottom" ToolTip="{Binding Name}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="Tile" Width="132" Height="184" RenderTransformOrigin="0.5,1" Background="Transparent">
+                                <Grid.RenderTransform>
+                                    <ScaleTransform x:Name="TileScale" />
+                                </Grid.RenderTransform>
+                                <Border x:Name="Glow" CornerRadius="12" Background="#01000000" Opacity="0">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="White" BlurRadius="26" ShadowDepth="0" Opacity="0.55" />
+                                    </Border.Effect>
+                                </Border>
+                                <Grid>
+                                    <Grid.OpacityMask>
+                                        <VisualBrush>
+                                            <VisualBrush.Visual>
+                                                <Border Width="132" Height="184" CornerRadius="12" Background="Black" />
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </Grid.OpacityMask>
+                                    <Border Background="{StaticResource GameroomCardBrush}" />
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource GameroomMutedText}" TextWrapping="Wrap"
+                                               TextAlignment="Center" VerticalAlignment="Center" Margin="10" />
+                                    <Image Source="{Binding CoverImage, Converter={StaticResource ImageStringToImageConverterCached}, IsAsync=True}"
+                                           Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
+                                    <Border x:Name="Dim" Background="#59000000" />
+                                </Grid>
+                                <Border x:Name="Frame" CornerRadius="12" BorderThickness="2.5" BorderBrush="White" Opacity="0" />
+                                <Button x:Name="PlayButton" Command="{Binding PlayCommand}" Cursor="Hand" Opacity="0"
+                                        Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid>
+                                                <Ellipse Fill="{StaticResource GameroomAccentBrush}" />
+                                                <TextBlock Text="&#xE768;" FontFamily="{StaticResource GameroomIconFont}" FontSize="15"
+                                                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,0,0" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter TargetName="Frame" Property="Opacity" Value="1" />
+                                    <Setter TargetName="Glow" Property="Opacity" Value="1" />
+                                    <Setter TargetName="Dim" Property="Opacity" Value="0" />
+                                    <Setter TargetName="PlayButton" Property="Opacity" Value="1" />
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="TileScale" Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.18">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseOut" />
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                                <DoubleAnimation Storyboard.TargetName="TileScale" Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.18">
+                                                    <DoubleAnimation.EasingFunction>
+                                                        <CubicEase EasingMode="EaseOut" />
+                                                    </DoubleAnimation.EasingFunction>
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="TileScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.18" />
+                                                <DoubleAnimation Storyboard.TargetName="TileScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.18" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel />
+        </ItemsPanelTemplate>
+
+        <Style x:Key="CardTitle" TargetType="TextBlock" BasedOn="{StaticResource GameroomText}">
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ClipToBounds="True">
+        <!-- Artwork of the selected game, cross faded when the selection changes -->
+        <Grid VerticalAlignment="Top" Height="660" IsHitTestVisible="False" ClipToBounds="True">
+            <!-- Own panel, so reordering the two images for the cross fade keeps them under the shading -->
+            <Grid>
+                <Image x:Name="BackdropA" Stretch="UniformToFill" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="Fant" />
+                <Image x:Name="BackdropB" Stretch="UniformToFill" VerticalAlignment="Top" RenderOptions.BitmapScalingMode="Fant" Opacity="0" />
+            </Grid>
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#F20B0C1A" Offset="0" />
+                        <GradientStop Color="#990B0C1A" Offset="0.38" />
+                        <GradientStop Color="#1A0B0C1A" Offset="0.75" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#660B0C1A" Offset="0" />
+                        <GradientStop Color="#000B0C1A" Offset="0.25" />
+                        <GradientStop Color="#990B0C1A" Offset="0.72" />
+                        <GradientStop Color="#FF0B0C1A" Offset="1" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Grid>
+
+        <!-- Ambient light in the color of the selected game -->
+        <Rectangle IsHitTestVisible="False" Opacity="0.3">
+            <Rectangle.Fill>
+                <RadialGradientBrush Center="0.1,0.55" GradientOrigin="0.1,0.55" RadiusX="0.7" RadiusY="0.45">
+                    <GradientStop x:Name="AmbientStop" Color="#8B5CF6" Offset="0" />
+                    <GradientStop Color="Transparent" Offset="1" />
+                </RadialGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <StackPanel Margin="40,22,40,36">
+                <!-- Greeting and clock -->
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <StackPanel.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.9" />
+                        </StackPanel.Effect>
+                        <TextBlock Text="{Binding Clock}" Style="{StaticResource GameroomText}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding DateText}" Style="{StaticResource GameroomText}" Opacity="0.85" HorizontalAlignment="Right" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding Greeting}" Style="{StaticResource GameroomText}" FontSize="17" Opacity="0.9" VerticalAlignment="Top">
+                        <TextBlock.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.9" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </DockPanel>
+
+                <!-- Selected game -->
+                <Grid Height="276" Margin="0,8,0,0" Visibility="{Binding HasGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel x:Name="HeroInfo" VerticalAlignment="Bottom">
+                        <StackPanel.RenderTransform>
+                            <TranslateTransform x:Name="HeroOffset" />
+                        </StackPanel.RenderTransform>
+                        <Border HorizontalAlignment="Left" CornerRadius="12" Padding="12,4" Background="#33FFFFFF" Margin="0,0,0,14">
+                            <TextBlock Text="{Binding HeroLabel}" Foreground="White" FontSize="12" FontWeight="SemiBold" FontFamily="{StaticResource GameroomFont}" />
+                        </Border>
+                        <Grid Height="120">
+                            <Image Source="{Binding HeroLogo, Converter={StaticResource ImageStringToImageConverterCached}}"
+                                   MaxHeight="120" MaxWidth="500" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   Visibility="{Binding HasHeroLogo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Image.Effect>
+                                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.7" />
+                                </Image.Effect>
+                            </Image>
+                            <TextBlock Text="{Binding HeroName}" Style="{StaticResource GameroomText}" FontSize="42" FontWeight="Bold" MaxWidth="820"
+                                       HorizontalAlignment="Left" VerticalAlignment="Bottom" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="116"
+                                       LineHeight="54" LineStackingStrategy="BlockLineHeight"
+                                       Visibility="{Binding HasHeroLogo, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.8" />
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Height="26">
+                            <TextBlock Text="{Binding HeroMeta}" Style="{StaticResource GameroomText}" FontSize="14" Opacity="0.9" VerticalAlignment="Center" />
+                            <Button Command="{Binding HeroAchievementsCommand}" Cursor="Hand" Focusable="False" Margin="14,0,0,0" VerticalAlignment="Center"
+                                    Visibility="{Binding HeroAchievements, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Pill" CornerRadius="11" Padding="10,3" Background="#33FFD54F">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE735;" FontFamily="{StaticResource GameroomIconFont}" Foreground="#FFD54F" FontSize="12" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding HeroAchievements}" Foreground="#FFE082" FontSize="12.5" FontWeight="SemiBold"
+                                                           FontFamily="{StaticResource GameroomFont}" Margin="6,0,0,0" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Pill" Property="Background" Value="#59FFD54F" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button Command="{Binding PlayHeroCommand}" Cursor="Hand" Height="50" MinWidth="170" Focusable="False">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="PlayBack" CornerRadius="12" Background="{StaticResource GameroomAccentBrush}" Padding="24,0">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="#8B5CF6" BlurRadius="20" ShadowDepth="0" Opacity="0.55" />
+                                            </Border.Effect>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="&#xE768;" FontFamily="{StaticResource GameroomIconFont}" FontSize="16" Foreground="White" VerticalAlignment="Center" />
+                                                <TextBlock Text="{DynamicResource LOCGameroomHomePlay}" Foreground="White" FontSize="17" FontWeight="SemiBold" Margin="11,0,0,0"
+                                                           FontFamily="{StaticResource GameroomFont}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="PlayBack" Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Color="#8B5CF6" BlurRadius="32" ShadowDepth="0" Opacity="0.95" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button Style="{StaticResource GameroomSecondaryButton}" Command="{Binding OpenHeroCommand}" Margin="12,0,0,0" Height="50"
+                                    Content="{DynamicResource LOCGameroomHomeGamePage}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Empty library -->
+                <Border Style="{StaticResource GameroomCard}" Margin="0,40,0,0" Padding="40,36" HorizontalAlignment="Left" MaxWidth="620"
+                        Visibility="{Binding HasGames, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock Text="{DynamicResource LOCGameroomHomeEmptyTitle}" Style="{StaticResource GameroomText}" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="{DynamicResource LOCGameroomHomeEmptyText}" Style="{StaticResource GameroomMutedText}" FontSize="14"
+                                   TextWrapping="Wrap" TextTrimming="None" Margin="0,8,0,20" />
+                        <Button Style="{StaticResource GameroomPrimaryButton}" HorizontalAlignment="Left" Command="{Binding OpenLibraryCommand}"
+                                Content="{DynamicResource LOCGameroomHomeOpenLibrary}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Carousel -->
+                <ScrollViewer x:Name="CarouselScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                              Margin="-6,14,-40,0" Padding="6,0,40,0" Focusable="False" PreviewMouseWheel="CarouselScroll_PreviewMouseWheel"
+                              Visibility="{Binding HasGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <ItemsControl ItemsSource="{Binding Carousel}" ItemTemplate="{StaticResource CarouselTileTemplate}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <Button Command="{Binding OpenLibraryCommand}" Cursor="Hand" Focusable="False" VerticalAlignment="Bottom">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Tile" Width="132" Height="184" CornerRadius="12" Background="#26FFFFFF"
+                                            BorderBrush="#33FFFFFF" BorderThickness="1">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="&#xE8F1;" FontFamily="{StaticResource GameroomIconFont}" FontSize="30" Foreground="White"
+                                                       HorizontalAlignment="Center" />
+                                            <TextBlock Text="{DynamicResource LOCGameroomHomeAllGames}" Foreground="White" FontSize="13" FontWeight="SemiBold"
+                                                       FontFamily="{StaticResource GameroomFont}" HorizontalAlignment="Center" Margin="0,10,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Tile" Property="Background" Value="{StaticResource GameroomAccentBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Statistics -->
+                <ItemsControl ItemsSource="{Binding Stats}" Margin="0,30,-14,0" Focusable="False"
+                              Visibility="{Binding HasGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource GameroomCard}" Margin="0,0,14,0">
+                                <DockPanel>
+                                    <Border DockPanel.Dock="Left" Width="44" Height="44" CornerRadius="12" Background="{StaticResource GameroomAccentBrush}"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="{Binding Icon}" FontFamily="{StaticResource GameroomIconFont}" FontSize="20" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Margin="14,0,0,0">
+                                        <TextBlock Text="{Binding Title}" Style="{StaticResource GameroomMutedText}" />
+                                        <TextBlock Text="{Binding Value}" Style="{StaticResource GameroomText}" FontSize="24" FontWeight="SemiBold" Margin="0,2,0,0" />
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource GameroomMutedText}" FontSize="12" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Grid Margin="0,30,0,0" Visibility="{Binding HasGames, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,24,0">
+                        <!-- Almost completed -->
+                        <StackPanel Visibility="{Binding HasAlmostDone, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,26">
+                            <TextBlock Text="{DynamicResource LOCGameroomHomeAlmostDone}" Style="{StaticResource GameroomSectionTitle}" />
+                            <TextBlock Text="{DynamicResource LOCGameroomHomeAlmostDoneHint}" Style="{StaticResource GameroomMutedText}" Margin="0,-8,0,12" />
+                            <ItemsControl ItemsSource="{Binding AlmostDone}" Focusable="False" Margin="0,0,-14,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="2" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Command="{Binding OpenCommand}" Cursor="Hand" Focusable="False" Margin="0,0,14,14">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Card" Style="{StaticResource GameroomCard}" Padding="12">
+                                                        <DockPanel>
+                                                            <Grid Width="54" Height="74">
+                                                                <Grid.OpacityMask>
+                                                                    <VisualBrush>
+                                                                        <VisualBrush.Visual>
+                                                                            <Border Width="54" Height="74" CornerRadius="7" Background="Black" />
+                                                                        </VisualBrush.Visual>
+                                                                    </VisualBrush>
+                                                                </Grid.OpacityMask>
+                                                                <Border Background="{StaticResource GameroomCardBrush}" />
+                                                                <Image Source="{Binding CoverImage, Converter={StaticResource ImageStringToImageConverterCached}, IsAsync=True}"
+                                                                       Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
+                                                            </Grid>
+                                                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                                                <DockPanel>
+                                                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PercentText}" Style="{StaticResource GameroomText}"
+                                                                               Foreground="{StaticResource GameroomAccentTextBrush}" FontWeight="SemiBold" />
+                                                                    <TextBlock Text="{Binding Name}" Style="{StaticResource GameroomText}" FontWeight="SemiBold" />
+                                                                </DockPanel>
+                                                                <TextBlock Text="{Binding ProgressText}" Style="{StaticResource GameroomMutedText}" FontSize="12" Margin="0,2,0,8" />
+                                                                <ProgressBar Style="{StaticResource GameroomProgressBar}" Height="6" Value="{Binding Percent, Mode=OneWay}" />
+                                                            </StackPanel>
+                                                        </DockPanel>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Card" Property="Background" Value="{StaticResource GameroomCardHoverBrush}" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- Installed, never played -->
+                        <StackPanel Visibility="{Binding HasNotPlayed, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{DynamicResource LOCGameroomHomeNotPlayedTitle}" Style="{StaticResource GameroomSectionTitle}" />
+                            <ItemsControl ItemsSource="{Binding NotPlayed}" ItemTemplate="{StaticResource GameCoverTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" Focusable="False" />
+                        </StackPanel>
+
+                        <StackPanel Visibility="{Binding HasRecentlyAdded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource GameroomLinkButton}" Command="{Binding OpenLibraryCommand}"
+                                        Content="{DynamicResource LOCGameroomHomeSeeLibrary}" VerticalAlignment="Center" Margin="0,0,18,12" />
+                                <TextBlock Text="{DynamicResource LOCGameroomHomeRecentlyAdded}" Style="{StaticResource GameroomSectionTitle}" />
+                            </DockPanel>
+                            <ItemsControl ItemsSource="{Binding RecentlyAdded}" ItemTemplate="{StaticResource GameCoverTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" Focusable="False" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Width="330">
+                        <!-- Activity of the week -->
+                        <Border Style="{StaticResource GameroomCard}" VerticalAlignment="Top" Padding="22,18">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding WeekTotal}" Style="{StaticResource GameroomText}" FontSize="17" FontWeight="SemiBold"
+                                               Foreground="{StaticResource GameroomAccentTextBrush}" />
+                                    <TextBlock Text="{DynamicResource LOCGameroomHomeYourWeek}" Style="{StaticResource CardTitle}" />
+                                </DockPanel>
+                                <TextBlock Text="{DynamicResource LOCGameroomHomeYourWeekHint}" Style="{StaticResource GameroomMutedText}" Margin="0,2,0,16" />
+                                <ItemsControl ItemsSource="{Binding WeekActivity}" Height="140" Focusable="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel ToolTip="{Binding Tooltip}" Background="Transparent">
+                                                <TextBlock DockPanel.Dock="Bottom" Text="{Binding Label}" Style="{StaticResource GameroomMutedText}"
+                                                           FontSize="12" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                                                <Border x:Name="Bar" Width="22" Height="{Binding BarHeight}" CornerRadius="6" VerticalAlignment="Bottom"
+                                                        Background="#4D9B8CFF" />
+                                            </DockPanel>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                    <Setter TargetName="Bar" Property="Background" Value="{StaticResource GameroomAccentBrush}" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Recent achievements -->
+                        <Border Style="{StaticResource GameroomCard}" Margin="0,16,0,0" Padding="22,18"
+                                Visibility="{Binding HasRecentAchievements, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource LOCGameroomHomeRecentAchievements}" Style="{StaticResource CardTitle}" />
+                                <TextBlock Text="{Binding AchievementsTotal}" Style="{StaticResource GameroomMutedText}" Margin="0,2,0,12" />
+                                <ItemsControl ItemsSource="{Binding RecentAchievements}" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding OpenCommand}" Cursor="Hand" Margin="0,0,0,10" ToolTip="{Binding Description}" Focusable="False">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <DockPanel Background="Transparent">
+                                                            <ContentControl Width="44" Height="44" Content="{Binding}" Focusable="False"
+                                                                            ContentTemplate="{StaticResource GameroomAchievementIcon}" />
+                                                            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                                                <TextBlock x:Name="NameText" Text="{Binding Name}" Style="{StaticResource GameroomText}" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource GameroomMutedText}" FontSize="12" />
+                                                            </StackPanel>
+                                                        </DockPanel>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="NameText" Property="Foreground" Value="{StaticResource GameroomAccentTextBrush}" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

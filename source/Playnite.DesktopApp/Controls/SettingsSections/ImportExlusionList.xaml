@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Playnite.DesktopApp.Controls.SettingsSections.ImportExlusionList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="600">
+
+    <DockPanel Margin="5">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <Button Content="{DynamicResource LOCRemoveTitle}" Margin="0,5,0,0"
+                    Command="{Binding RemoveImportExclusionItemCommand}" 
+                    CommandParameter="{Binding SelectedItems, ElementName=ListImportExclusionList}"/>
+        </StackPanel>
+        <DataGrid SelectionMode="Extended" ItemsSource="{Binding ImportExclusionList}"
+                  CanUserAddRows="False" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserSortColumns="True"   
+                  GridLinesVisibility="None" BorderThickness="0"
+                  Name="ListImportExclusionList" DockPanel.Dock="Top">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{DynamicResource LOCNameLabel}" Binding="{Binding Name}" IsReadOnly="True" />
+                <DataGridTextColumn Header="{DynamicResource LOCGameId}" Binding="{Binding GameId}" IsReadOnly="True" />
+                <DataGridTextColumn Header="{DynamicResource LOCGameProviderTitle}" Binding="{Binding LibraryName}" IsReadOnly="True" />
+                <DataGridTextColumn Header="{DynamicResource LOCExtensionID}" Binding="{Binding LibraryId}" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,23 @@
+﻿root = true
+
+[*]
+indent_style = space
+end_of_line = crlf
+
+[*.{cs,axaml,xaml}]
+indent_size = 4
+tab_width = 4
+
+# Because VS generates these with 2 space indent
+[*.csproj]
+indent_size = 2
+tab_width = 2
+
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0036: Order modifiers
+dotnet_diagnostic.IDE0036.severity = none
+
+# IDE0025: Use expression body for properties
+dotnet_diagnostic.IDE0025.severity = none

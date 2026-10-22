@@ -1,0 +1,14 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <!-- Builds everything needed to run Gameroom into a single folder. Used by dev-build.ps1. -->
+    <PropertyGroup>
+        <AppProperties>OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none; AppendTargetFrameworkToOutputPath=false; AppendRuntimeIdentifierToOutputPath=false</AppProperties>
+    </PropertyGroup>
+    <!-- Order matters: the browser process has fewer package references, so the main apps are built
+         after it to make sure their newer dependency versions are the ones left in the output folder. -->
+    <Target Name="Build">
+        <MSBuild Projects="../source/Playnite.BrowserProcess/Playnite.BrowserProcess.csproj" Targets="Build" Properties="$(AppProperties)" />
+        <MSBuild Projects="../source/Tools/GameroomUpdater/GameroomUpdater.csproj" Targets="Build" Properties="$(AppProperties)" />
+        <MSBuild Projects="../source/Playnite.FullscreenApp/Playnite.FullscreenApp.csproj" Targets="Build" Properties="$(AppProperties)" />
+        <MSBuild Projects="../source/Playnite.DesktopApp/Playnite.DesktopApp.csproj" Targets="Build" Properties="$(AppProperties)" />
+    </Target>
+</Project>

@@ -1,0 +1,2 @@
+﻿https://api.playnite.link/download/installer_mirrors.txt
+https://playnite.link/download/installer_mirrors.txt

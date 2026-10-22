@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>Gameroom.Fullscreen</AssemblyName>
+    <AssemblyTitle>Gameroom Fullscreen</AssemblyTitle>
+    <Product>Gameroom</Product>
+    <Copyright>Copyright © Josef Nemec 2026</Copyright>
+    <TargetFramework>net462</TargetFramework>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Themes\Fullscreen\Default\Images\applogo.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <Platforms>x86</Platforms>
+    <OutputPath>bin</OutputPath>
+    <LangVersion>12</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWpf>true</UseWpf>
+    <StartupObject>Playnite.FullscreenApp.ProgramEntry</StartupObject>
+    <LargeAddressAware>true</LargeAddressAware>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Playnite.FullscreenApp.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlayniteSDK\Playnite.SDK.csproj" />
+    <ProjectReference Include="..\Playnite\Playnite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\..\references\Fonts\**">
+      <Link>Fonts\%(Filename)%(Extension)</Link>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <SplashScreen Include="SplashScreen.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Themes\Fullscreen\**\*.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Themes\Fullscreen\Default\Audio\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Fullscreen\Default\Images\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Fullscreen\Default\theme.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\Fullscreen\Default\DescriptionView.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" version="2.8.0" />
+    <PackageReference Include="CommonServiceLocator" version="1.3" />
+    <PackageReference Include="Expression.Blend.Sdk" version="1.0.2" />
+    <PackageReference Include="LargeAddressAware" version="1.0.6" />
+    <PackageReference Include="MathConverter" version="2.2.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" version="1.1.39" />
+    <PackageReference Include="Playnite.Deps" version="10.56.0" />
+    <PackageReference Include="Prism.Core" version="6.3.0" />
+    <PackageReference Include="Prism.Wpf" version="6.3.0" />
+    <PackageReference Include="System.IO.Abstractions" version="2.1.0.227" />
+    <PackageReference Include="System.ValueTuple" version="4.5.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PostBuildEvent>SETX GAMEROOM_SLN $(SolutionDir)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

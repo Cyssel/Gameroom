@@ -1,0 +1,32 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <Target Name="BeforeBuild">
+        <RemoveDir Directories="$(OutputPath)" />
+        <MakeDir Directories="$(OutputPath)" />
+    </Target>  
+    <Target Name="Build">
+        <MSBuild
+            Projects="../source/tools/Playnite.Toolbox/Playnite.Toolbox.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none;" />
+        <MSBuild
+            Projects="../source/Playnite.DesktopApp/Playnite.DesktopApp.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none;" />
+        <MSBuild
+            Projects="../source/Playnite.FullscreenApp/Playnite.FullscreenApp.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none;" />
+        <MSBuild
+            Projects="../source/Playnite.BrowserProcess/Playnite.BrowserProcess.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none;" />
+        <MSBuild
+            Projects="../source/PlayniteSDK/Playnite.SDK.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none; Platform=AnyCPU" />
+        <MSBuild
+            Projects="../source/Tools/PlayniteInstaller/PlayniteInstaller.csproj"
+            Targets="Build"
+            Properties="OutputPath=$(OutputPath); Configuration=$(Configuration); AllowedReferenceRelatedFileExtensions=none; Platform=AnyCPU" />
+    </Target>
+</Project>

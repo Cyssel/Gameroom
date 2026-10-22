@@ -1,0 +1,165 @@
+﻿<UserControl x:Class="Playnite.DesktopApp.Controls.GameTaskView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:pcon="clr-namespace:Playnite.Converters;assembly=Playnite"
+             xmlns:pbeh="clr-namespace:Playnite.Behaviors;assembly=Playnite"
+             xmlns:mods="clr-namespace:Playnite.SDK.Models;assembly=Playnite.SDK"
+             xmlns:pctrls="clr-namespace:Playnite.DesktopApp.Controls"
+             mc:Ignorable="d" 
+             d:DesignWidth="600">
+    <UserControl.Resources>
+        <pcon:BidirectionalEnumAndNumberConverter x:Key="BidirectionalEnumAndNumberConverter" />
+        <pcon:BoolToAutoWidthConverter x:Key="BoolToAutoWidthConverter" />       
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}" >
+                <Setter Property="Margin" Value="3" />
+            </Style>
+            <Style TargetType="pctrls:NullIntNumericBox" BasedOn="{StaticResource {x:Type pctrls:NullIntNumericBox}}" >
+                <Setter Property="Margin" Value="3" />
+            </Style>
+            <Style TargetType="pctrls:PathSelectionBox" BasedOn="{StaticResource {x:Type pctrls:PathSelectionBox}}" >
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="3" />
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}" >
+                <Setter Property="Margin" Value="3" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,3,0" />
+            </Style>
+        </Grid.Resources>
+        <Grid Grid.Column="0" Margin="0,0,15,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="{Binding ShowTrackingModeRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{DynamicResource LOCNameLabel}" Grid.Column="0" Grid.Row="0"/>
+            <TextBox IsEnabled="{Binding ShowNameRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                     Name="TextName" Grid.Column="1" Grid.Row="0" Text="{Binding Name}"/>
+
+            <TextBlock Text="{DynamicResource LOCIsPlayAction}" Grid.Column="0" Grid.Row="1" />
+            <CheckBox Grid.Column="1" Grid.Row="1" Margin="3,5,3,5"
+                      Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                      IsChecked="{Binding IsPlayAction}" />
+
+            <TextBlock Text="{DynamicResource LOCTypeLabel}" Grid.Column="0" Grid.Row="2"/>
+            <ComboBox Name="ComboType" Grid.Column="1" Grid.Row="2"                      
+                      SelectedValue="{Binding Type}"
+                      pbeh:SelectorBehaviors.EnumSource="{x:Type mods:GameActionType}"
+                      SelectionChanged="ComboType_SelectionChanged" />
+
+            <TextBlock Text="{DynamicResource LOCActionTrackingMode}" Grid.Column="0" Grid.Row="3" />
+            <ComboBox Name="ComboTrackingMode" Grid.Column="1" Grid.Row="3"
+                      SelectedValue="{Binding TrackingMode}"
+                      pbeh:SelectorBehaviors.EnumSource="{x:Type mods:TrackingMode}"
+                      SelectionChanged="ComboTrackingMode_SelectionChanged"/>
+        </Grid>
+
+        <TextBox Grid.Column="1" AcceptsReturn="True" AcceptsTab="True" MaxHeight="200"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 FontFamily="{DynamicResource MonospaceFontFamily}"
+                 Text="{Binding Script}"
+                 Visibility="{Binding ShowScriptInput, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <Grid Grid.Column="1"
+              Visibility="{Binding ShowScriptInput, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Name="RowPath" Height="{Binding ShowPathRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowArguments" Height="{Binding ShowArgumentsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowWorkingDir" Height="{Binding ShowWorkingDirRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>                
+                <RowDefinition Name="RowEmulator" Height="{Binding ShowEmulatorRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowOverrideArgs" Height="{Binding ShowOverrideArgsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>                
+                <RowDefinition Name="RowDefaultArguments" Height="{Binding ShowDefaultArgumentsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowAdditionalArgs" Height="{Binding ShowAdditionalArgumentsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowCustomEmulatorArgs" Height="{Binding ShowCustomEmulatorArgsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowTrackingPath" Height="{Binding ShowTrackingPathRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowTrackingInitDelay" Height="{Binding ShowTrackingTimeRows, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+                <RowDefinition Name="RowTrackingFrequency" Height="{Binding ShowTrackingTimeRows, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay, Converter={StaticResource BoolToAutoWidthConverter}}"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{DynamicResource LOCPathLabel}" Grid.Column="0" Grid.Row="0" />            
+            <pctrls:PathSelectionBox x:Name="TextPath" Grid.Column="1" Grid.Row="0"
+                                     Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding ShowPathRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                                     ShowFileSelector="True"/>
+
+            <TextBlock Text="{DynamicResource LOCArgumentsTitle}" Grid.Column="0" Grid.Row="1" />
+            <TextBox IsEnabled="{Binding ShowArgumentsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                     Name="TextArguments" Grid.Column="1" Grid.Row="1" Text="{Binding Arguments}" />
+
+            <TextBlock Text="{DynamicResource LOCWorkingDirTitle}" Grid.Column="0" Grid.Row="2" />
+            <pctrls:PathSelectionBox IsEnabled="{Binding ShowWorkingDirRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                                     x:Name="TextWorkDir" Grid.Column="1" Grid.Row="2" Text="{Binding WorkingDir}"
+                                     ShowDirectorySelector="True" />
+            
+            <StackPanel Orientation="Horizontal"
+                    IsEnabled="{Binding ShowEmulatorRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                    Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,3,0,3">
+                <TextBlock Text="{DynamicResource LOCEmulatorTitle}" />
+                <ComboBox Name="ComboEmulator" SelectionChanged="ComboEmulator_SelectionChanged"
+                      Margin="5,0,10,0"
+                      ItemsSource="{Binding Emulators, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      SelectedValuePath="Id" SelectedValue="{Binding EmulatorId}" DisplayMemberPath="Name" />
+                <Label Content="{DynamicResource LOCProfileLabel}" />
+                <ComboBox Name="ComboEmulatorConfig" SelectionChanged="ComboEmulatorConfig_SelectionChanged"
+                      Margin="5,0,5,0"
+                      ItemsSource="{Binding SelectedItem.SelectableProfiles, ElementName=ComboEmulator}"
+                      SelectedValuePath="Id" SelectedValue="{Binding EmulatorProfileId}" DisplayMemberPath="Name" />
+            </StackPanel>
+
+            <TextBlock Text="{DynamicResource LOCOverrideEmulatorArguments}" Grid.Column="0" Grid.Row="4"  />
+            <CheckBox IsEnabled="{Binding ShowOverrideArgsRow, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                      Name="CheckOverrideArgs" Grid.Column="1" Grid.Row="4" Margin="3,5,3,5"
+                  IsChecked="{Binding OverrideDefaultArgs}" Checked="CheckOverrideArgs_Checked" Unchecked="CheckOverrideArgs_Checked"/>
+
+
+            <TextBlock Text="{DynamicResource LOCEmulatorArguments}" Grid.Column="0" Grid.Row="5" />
+            <TextBox Name="TextEmulatorArguments" Grid.Column="1" Grid.Row="5" 
+                     Text="{Binding SelectedEmulatorArguments, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                     IsEnabled="False" />
+
+            <TextBlock Text="{DynamicResource LOCAdditionalEmulatorArguments}" Grid.Column="0" Grid.Row="6" />
+            <TextBox Name="TextAdditionalArguments" Grid.Column="1" Grid.Row="6"
+                     Text="{Binding AdditionalArguments}" />
+
+            <TextBlock Text="{DynamicResource LOCEmulatorArguments}" Grid.Column="0" Grid.Row="7" />
+            <TextBox Name="EmulatorArguments" Grid.Column="1" Grid.Row="7" Text="{Binding Arguments}" />
+
+            <TextBlock Text="{DynamicResource LOCActionTrackingPath}" Grid.Column="0" Grid.Row="8" />
+            <pctrls:PathSelectionBox Grid.Column="1" Grid.Row="8" ShowDirectorySelector="True"
+                                     Text="{Binding TrackingPath}"/>
+
+            <TextBlock Text="{DynamicResource LOCActionTrackingTrackingDelay}" Grid.Column="0" Grid.Row="9" />
+            <pctrls:NullIntNumericBox Grid.Column="1" Grid.Row="9"
+                                      Value="{Binding InitialTrackingDelay}"
+                                      MinValue="0" />
+
+            <TextBlock Text="{DynamicResource LOCActionTrackingFrequency}" Grid.Column="0" Grid.Row="10" />
+            <pctrls:NullIntNumericBox Grid.Column="1" Grid.Row="10"
+                                      Value="{Binding TrackingFrequency}"
+                                      MinValue="0" />
+        </Grid>
+    </Grid>
+</UserControl>

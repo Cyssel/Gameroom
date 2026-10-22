@@ -1,0 +1,354 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <!-- Strings of Gameroom specific features. Kept apart from Playnite's localization files so those can be updated from upstream. -->
+
+    <!-- Live detection -->
+    <sys:String x:Key="LOCGameroomDetectedSessionStarted">Gameroom is tracking your time in {0}.</sys:String>
+    <sys:String x:Key="LOCGameroomDetectedSessionEnded">{0}: {1} played.</sys:String>
+    <sys:String x:Key="LOCGameroomUnknownGameDetected">Gameroom detected a game that isn't in your library: {0}. Click to add it.</sys:String>
+    <sys:String x:Key="LOCGameroomUnknownGameTitle">Game detected</sys:String>
+    <sys:String x:Key="LOCGameroomUnknownGameQuestion" xml:space="preserve">{0}
+
+{1}
+Recognized as: {2}
+
+Add it to your library? The time of the current session will be kept.</sys:String>
+    <sys:String x:Key="LOCGameroomAddToLibrary">Add to library</sys:String>
+    <sys:String x:Key="LOCGameroomNotAGame">Not a game, don't ask again</sys:String>
+    <sys:String x:Key="LOCGameroomUnknownGameAdded">{0} was added to your library.</sys:String>
+
+    <!-- Save backups -->
+    <sys:String x:Key="LOCGameroomSavesNoLocations">No save folders found.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesNoFiles">Save folders are empty.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesTooLarge">Saves are too large to back up ({0} MB).</sys:String>
+    <sys:String x:Key="LOCGameroomSavesUnchanged">Saves haven't changed since the last backup.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesBackedUp">{0} save files of {1} backed up.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesBackupFailed">Save backup of {0} failed: {1}</sys:String>
+    <sys:String x:Key="LOCGameroomSavesCloseGameFirst">Close the game before restoring its saves.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesArchiveMissing">The backup file no longer exists.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesRestored">{0} save files of {1} restored.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesWindowTitle">Save backups</sys:String>
+    <sys:String x:Key="LOCGameroomSavesLocations">Save locations</sys:String>
+    <sys:String x:Key="LOCGameroomSavesBackups">Backups</sys:String>
+    <sys:String x:Key="LOCGameroomSavesAddLocation">Add folder…</sys:String>
+    <sys:String x:Key="LOCGameroomSavesRemoveLocation">Remove</sys:String>
+    <sys:String x:Key="LOCGameroomSavesBackupNow">Back up now</sys:String>
+    <sys:String x:Key="LOCGameroomSavesRestore">Restore</sys:String>
+    <sys:String x:Key="LOCGameroomSavesDelete">Delete</sys:String>
+    <sys:String x:Key="LOCGameroomSavesShowInFolder">Show in folder</sys:String>
+    <sys:String x:Key="LOCGameroomSavesOpenLocation">Open folder</sys:String>
+    <sys:String x:Key="LOCGameroomSavesRestoreConfirm" xml:space="preserve">Restore saves of {0} from the backup of {1}?
+
+Your current saves will be backed up first.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesDeleteConfirm">Delete the selected backup?</sys:String>
+    <sys:String x:Key="LOCGameroomSavesDisableForGame">Don't back up this game automatically</sys:String>
+    <sys:String x:Key="LOCGameroomSavesNoLocationsHint">No save folders were found yet. Play the game once so Gameroom can discover them, or add a folder manually.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesSourceUser">Added by you</sys:String>
+    <sys:String x:Key="LOCGameroomSavesSourceKnown">Known location</sys:String>
+    <sys:String x:Key="LOCGameroomSavesSourceLearned">Discovered while playing</sys:String>
+    <sys:String x:Key="LOCGameroomSavesTriggerSessionEnded">After playing</sys:String>
+    <sys:String x:Key="LOCGameroomSavesTriggerManual">Manual</sys:String>
+    <sys:String x:Key="LOCGameroomSavesTriggerBeforeRestore">Before restore</sys:String>
+    <sys:String x:Key="LOCGameroomSavesTriggerWhilePlaying">While playing</sys:String>
+    <sys:String x:Key="LOCGameroomSavesLiveBackup">Your progress in {0} was saved, Gameroom made a copy of it.</sys:String>
+    <sys:String x:Key="LOCGameroomRestoreOffer">Gameroom has a backup of your {0} saves from {1}, but there are no saves of it on this PC. Click to restore them.</sys:String>
+    <sys:String x:Key="LOCGameroomRestoreOfferTitle">Restore saves</sys:String>
+    <sys:String x:Key="LOCGameroomRestoreNever">Don't ask again for this game</sys:String>
+    <sys:String x:Key="LOCGameroomMenuSteamMetadata">Download cover and details from Steam</sys:String>
+    <sys:String x:Key="LOCGameroomSteamMetadataProgress">Downloading data from Steam…</sys:String>
+    <sys:String x:Key="LOCGameroomSteamMetadataDone">Cover and details of {0} were downloaded from Steam.</sys:String>
+    <sys:String x:Key="LOCGameroomSteamMetadataNotFound">{0} wasn't found in the Steam store.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnDate">Date</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnFiles">Files</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnSize">Size</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnType">Type</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnPath">Folder</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnSource">Source</sys:String>
+    <sys:String x:Key="LOCGameroomSteamAppId">Steam App ID:</sys:String>
+    <sys:String x:Key="LOCGameroomSteamAppIdTooltip">Used to find saves of Steam emulators and Steam Cloud. Detected automatically when possible.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesInProgress">Backing up saves…</sys:String>
+    <sys:String x:Key="LOCGameroomSavesRestoreInProgress">Restoring saves…</sys:String>
+
+    <!-- Sessions -->
+    <sys:String x:Key="LOCGameroomSessionsTitle">Play sessions</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsStart">Started</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsEnd">Ended</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsDuration">Duration</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsSource">How</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsExecutable">Executable</sys:String>
+    <sys:String x:Key="LOCGameroomSessionSourceLaunched">Launched from Gameroom</sys:String>
+    <sys:String x:Key="LOCGameroomSessionSourceDetected">Detected</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsTotal">{0} sessions, {1} in total</sys:String>
+    <sys:String x:Key="LOCGameroomSessionsEmpty">No sessions recorded yet.</sys:String>
+
+    <!-- Play statistics -->
+    <sys:String x:Key="LOCGameroomPlayStatsTitle">Play statistics</sys:String>
+    <sys:String x:Key="LOCGameroomMenuPlayStats">Play statistics…</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsLast7Days">Last 7 days</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsLast30Days">Last 30 days</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsThisYear">This year</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsAll">All time</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsTotal">Time played</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsSessions">Sessions</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsAverageSession">Average session</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsDaysPlayed">Days played</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsDaysPlayedValue">{0} of {1}</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsGames">Games</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsPerDay">Play time per day</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsPerWeek">Play time per week</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsPerMonth">Play time per month</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsTopGames">Most played games</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsGameSession">1 session</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsGameSessions">{0} sessions</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsEmpty">No play sessions in this period.</sys:String>
+    <sys:String x:Key="LOCGameroomPlayStatsNote">Includes sessions recorded by Gameroom, both launched from Gameroom and detected while running.</sys:String>
+
+    <!-- Game menu -->
+    <sys:String x:Key="LOCGameroomMenuSaves">Save backups</sys:String>
+    <sys:String x:Key="LOCGameroomMenuBackupNow">Back up now</sys:String>
+    <sys:String x:Key="LOCGameroomMenuRestoreLatest">Restore latest backup</sys:String>
+    <sys:String x:Key="LOCGameroomMenuRestoreLatestDate">Restore latest backup ({0})</sys:String>
+    <sys:String x:Key="LOCGameroomMenuManageBackups">Manage backups and save locations…</sys:String>
+    <sys:String x:Key="LOCGameroomMenuOpenBackupFolder">Open backup folder</sys:String>
+    <sys:String x:Key="LOCGameroomMenuSessions">Play sessions…</sys:String>
+
+    <!-- Settings -->
+    <sys:String x:Key="LOCGameroomSettingsTitle">Gameroom</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsDetectionHeader">Live game detection</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsLiveDetection">Detect games started outside of Gameroom and record their playtime</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsLiveDetectionTooltip">Library games launched from desktop shortcuts, store clients or directly from their folder are recognized and the time you play is added to the game.</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsDetectUnknown">Recognize running games that aren't in the library</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAutoAddUnknown">Add recognized games to the library automatically</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsNotifySessions">Show notifications when a detected session starts and ends</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsMinSession">Ignore detected sessions shorter than (seconds):</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsInterval">Check running processes every (seconds):</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsIgnored">Executables never treated as games (one per line):</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsSavesHeader">Save backups</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsSavesEnabled">Back up game saves after each play session</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsLearnSaves">Discover save folders by watching files games write while running</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsBackupDir">Backup folder:</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsBackupDirTooltip">Choose a folder synced by OneDrive, Google Drive or Dropbox to keep your saves in the cloud. Leave empty to use Gameroom's data folder.</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsMaxBackups">Automatic backups kept per game:</sys:String>
+
+    <!-- Playnite library import -->
+    <sys:String x:Key="LOCGameroomImportPlayniteTitle">Import Playnite library</sys:String>
+    <sys:String x:Key="LOCGameroomImportPlayniteMessage" xml:space="preserve">A Playnite library was found in:
+{0}
+
+Do you want to copy your games, playtime, installed extensions and themes into Gameroom?
+Your Playnite installation won't be modified.</sys:String>
+    <sys:String x:Key="LOCGameroomImportPlayniteRunning">Playnite is running. Close it and press OK to import its library.</sys:String>
+    <sys:String x:Key="LOCGameroomImportPlayniteProgress">Copying Playnite library…</sys:String>
+    <sys:String x:Key="LOCGameroomImportPlayniteFailed">Failed to import the Playnite library: {0}</sys:String>
+
+    <!-- Home -->
+    <sys:String x:Key="LOCGameroomHome">Home</sys:String>
+    <sys:String x:Key="LOCGameroomHomeGoodMorning">Good morning</sys:String>
+    <sys:String x:Key="LOCGameroomHomeGoodAfternoon">Good afternoon</sys:String>
+    <sys:String x:Key="LOCGameroomHomeGoodEvening">Good evening</sys:String>
+    <sys:String x:Key="LOCGameroomHomeContinue">Continue playing</sys:String>
+    <sys:String x:Key="LOCGameroomHomeNewInLibrary">New in your library</sys:String>
+    <sys:String x:Key="LOCGameroomHomePlay">Play</sys:String>
+    <sys:String x:Key="LOCGameroomHomeDetails">View details</sys:String>
+    <sys:String x:Key="LOCGameroomHomeEmptyTitle">Your library is empty</sys:String>
+    <sys:String x:Key="LOCGameroomHomeEmptyText">Add your games or just start one: Gameroom detects it, tracks your time and protects your saves.</sys:String>
+    <sys:String x:Key="LOCGameroomHomeOpenLibrary">Go to library</sys:String>
+    <sys:String x:Key="LOCGameroomHomeSeeLibrary">See library</sys:String>
+    <sys:String x:Key="LOCGameroomHomeRecentlyPlayed">Recently played</sys:String>
+    <sys:String x:Key="LOCGameroomHomeRecentlyAdded">Recently added</sys:String>
+    <sys:String x:Key="LOCGameroomHomeYourWeek">Your week</sys:String>
+    <sys:String x:Key="LOCGameroomHomeYourWeekHint">Time played in the last 7 days</sys:String>
+    <sys:String x:Key="LOCGameroomHomeThisWeek">This week</sys:String>
+    <sys:String x:Key="LOCGameroomHomeSessions">{0} sessions</sys:String>
+    <sys:String x:Key="LOCGameroomHomeSessionsOne">{0} session</sys:String>
+    <sys:String x:Key="LOCGameroomHomeTotalPlaytime">Total playtime</sys:String>
+    <sys:String x:Key="LOCGameroomHomePlayedGames">{0} games played</sys:String>
+    <sys:String x:Key="LOCGameroomHomePlayedGamesOne">{0} game played</sys:String>
+    <sys:String x:Key="LOCGameroomHomeLibrary">Library</sys:String>
+    <sys:String x:Key="LOCGameroomHomeInstalled">{0} installed</sys:String>
+    <sys:String x:Key="LOCGameroomHomeInstalledOne">{0} installed</sys:String>
+    <sys:String x:Key="LOCGameroomHomeCloud">Cloud</sys:String>
+    <sys:String x:Key="LOCGameroomHomeCloudBackups">save backups in the cloud</sys:String>
+    <sys:String x:Key="LOCGameroomHomeCloudSignedOut">Sign in to turn it on</sys:String>
+    <sys:String x:Key="LOCGameroomHomeNotPlayed">Not played</sys:String>
+    <sys:String x:Key="LOCGameroomHomeToday">Today</sys:String>
+    <sys:String x:Key="LOCGameroomHomeYesterday">Yesterday</sys:String>
+    <sys:String x:Key="LOCGameroomHomeDaysAgo">{0} days ago</sys:String>
+
+    <!-- Account -->
+    <sys:String x:Key="LOCGameroomAccount">Account</sys:String>
+    <sys:String x:Key="LOCGameroomAccountTitle">Your Gameroom account</sys:String>
+    <sys:String x:Key="LOCGameroomAccountSubtitle">Keep your saves in the cloud and get them back on any PC, even after reinstalling your games.</sys:String>
+    <sys:String x:Key="LOCGameroomAccountSignIn">Sign in</sys:String>
+    <sys:String x:Key="LOCGameroomAccountSignUp">Create account</sys:String>
+    <sys:String x:Key="LOCGameroomAccountCreate">Create my account</sys:String>
+    <sys:String x:Key="LOCGameroomAccountUsername">Username</sys:String>
+    <sys:String x:Key="LOCGameroomAccountEmail">Email</sys:String>
+    <sys:String x:Key="LOCGameroomAccountPassword">Password</sys:String>
+    <sys:String x:Key="LOCGameroomAccountPrivacy">Your saves are stored in a private space only your account can access. The session is stored encrypted on this PC.</sys:String>
+    <sys:String x:Key="LOCGameroomAccountSignOut">Sign out</sys:String>
+    <sys:String x:Key="LOCGameroomAccountMemberSince">Member since {0}</sys:String>
+    <sys:String x:Key="LOCGameroomAccountPlayedGames">Games played</sys:String>
+    <sys:String x:Key="LOCGameroomAccountCloudSummary">{0} of {1} ({2})</sys:String>
+    <sys:String x:Key="LOCGameroomCountBackups">{0} backups</sys:String>
+    <sys:String x:Key="LOCGameroomCountBackupsOne">{0} backup</sys:String>
+    <sys:String x:Key="LOCGameroomCountGames">{0} games</sys:String>
+    <sys:String x:Key="LOCGameroomCountGamesOne">{0} game</sys:String>
+    <sys:String x:Key="LOCGameroomAccountCloudSaves">Cloud saves</sys:String>
+    <sys:String x:Key="LOCGameroomAccountSyncNow">Sync now</sys:String>
+    <sys:String x:Key="LOCGameroomAccountAutoUpload">Upload every save backup automatically</sys:String>
+    <sys:String x:Key="LOCGameroomAccountNoCloudSaves">No cloud saves yet. Play something or press "Sync now" to upload your current backups.</sys:String>
+
+    <!-- Cloud -->
+    <sys:String x:Key="LOCGameroomCloudSigningIn">Signing in…</sys:String>
+    <sys:String x:Key="LOCGameroomCloudCreatingAccount">Creating your account…</sys:String>
+    <sys:String x:Key="LOCGameroomCloudConfirmEmail">Account created. Check your inbox and confirm your address, then sign in here.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudSyncing">Syncing…</sys:String>
+    <sys:String x:Key="LOCGameroomCloudSyncFailed">Last sync failed: {0}</sys:String>
+    <sys:String x:Key="LOCGameroomCloudLastSync">Synced at {0}</sys:String>
+    <sys:String x:Key="LOCGameroomCloudNotSynced">Not synced on this PC yet</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorCredentials">Wrong email or password.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorNotConfirmed">Confirm your email before signing in.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorExists">An account with that email already exists.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorWeakPassword">The password must be at least 6 characters long.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorInvalidEmail">Enter a valid email address.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorUsername">The username must be at least 2 characters long.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorUsernameTaken">That username is already taken.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorRateLimit">Too many attempts. Wait a few minutes and try again.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorEmailNotAuthorized">The confirmation email couldn't be sent. Your server has no email service set up: turn off email confirmation or add SMTP (see the server guide).</sys:String>
+    <sys:String x:Key="LOCGameroomCloudErrorConnection">Couldn't reach your server. Check your internet connection and the project URL.</sys:String>
+    <sys:String x:Key="LOCGameroomSavesColumnCloud">In cloud</sys:String>
+    <sys:String x:Key="LOCGameroomSavesInCloud">This backup is stored in your account</sys:String>
+
+    <!-- About -->
+    <sys:String x:Key="LOCGameroomAboutTagline">Your game library: detects what you play, tracks your time and protects your saves.</sys:String>
+
+    <!-- Achievements -->
+    <sys:String x:Key="LOCGameroomMenuAchievements">Achievements…</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementUnlocked">Achievement unlocked</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementRare">Rare achievement: {0}% of players</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementPercent">{0}% of players have it</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementNotification">Achievement unlocked in {0}: {1}</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementNotificationNoGame">Achievement unlocked: {0}</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementTestName">This is how achievements look!</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementTestDescription">When you unlock an achievement in a game, it shows up here.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceSteam">Steam</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceGoldberg">Goldberg / GSE</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceCodex">CODEX</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceRune">RUNE</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceOnlineFix">OnlineFix</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementSourceEmpress">EMPRESS</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsTitle">Achievements</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsSeeAll">See all</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsSummary">{0} of {1} achievements unlocked</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsSources">Progress read from: {0}</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsNoProgress">No progress of this game on this PC yet.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsUnlocked">Unlocked</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsUnlockedOn">Unlocked {0}</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsHiddenName">Hidden achievement</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsHiddenDescription">Keep playing to find out.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsRare">Rare</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsRevealHidden">Show hidden achievements</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsFilterAll">All</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsFilterUnlocked">Unlocked</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsFilterLocked">Locked</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsLoading">Loading achievements…</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsNotFound">This game wasn't found on Steam.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsNone">This game has no Steam achievements.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsFailed">Achievements couldn't be loaded. Check your internet connection.</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsAppIdHint">If you know its Steam AppID (the number in the address of its store page), enter it here:</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsUseAppId">Use AppID</sys:String>
+    <sys:String x:Key="LOCGameroomAchievementsRefresh">Refresh</sys:String>
+    <sys:String x:Key="LOCGameroomHomeRecentAchievements">Recent achievements</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAchievementsTotal">{0} achievements unlocked in total</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAchievementsTotalOne">{0} achievement unlocked in total</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementsHeader">Achievements</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementsInfo">Gameroom shows the Steam achievements of your games, also of games not installed from Steam. Progress is read from the Steam client and from supported Steam emulators (Goldberg/GSE, CODEX, RUNE, EMPRESS and OnlineFix).</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementOverlay">Show a popup over the game when an achievement is unlocked</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementSound">Play a sound</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementOverlaySteam">Also show it for games running through Steam (Steam shows its own)</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementOverlayHint">The popup shows over windowed and borderless fullscreen games. Windows doesn't allow anything over exclusive fullscreen games: if you don't see it, switch the game's display mode to borderless or windowed fullscreen.</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsAchievementTest">Test popup</sys:String>
+
+    <!-- Game page and console style start page -->
+    <sys:String x:Key="LOCGameroomMenuGamePage">Game page</sys:String>
+    <sys:String x:Key="LOCGameroomJustNow">Just now</sys:String>
+    <sys:String x:Key="LOCGameroomMinutesAgo">{0} min ago</sys:String>
+    <sys:String x:Key="LOCGameroomHoursAgo">{0} h ago</sys:String>
+    <sys:String x:Key="LOCGameroomGameRunning">Playing now</sys:String>
+    <sys:String x:Key="LOCGameroomGameLaunching">Starting…</sys:String>
+    <sys:String x:Key="LOCGameroomGameInstalling">Installing…</sys:String>
+    <sys:String x:Key="LOCGameroomGameInstall">Install</sys:String>
+    <sys:String x:Key="LOCGameroomGameBack">Back</sys:String>
+    <sys:String x:Key="LOCGameroomGameMore">More options</sys:String>
+    <sys:String x:Key="LOCGameroomGameStatPlaytime">TIME PLAYED</sys:String>
+    <sys:String x:Key="LOCGameroomGameStatLastPlayed">LAST PLAYED</sys:String>
+    <sys:String x:Key="LOCGameroomGameStatAchievements">ACHIEVEMENTS</sys:String>
+    <sys:String x:Key="LOCGameroomGameStatSaves">SAVES</sys:String>
+    <sys:String x:Key="LOCGameroomGameRarestTitle">YOUR RAREST ACHIEVEMENT</sys:String>
+    <sys:String x:Key="LOCGameroomGameRarest">{0} · {1}% of players have it</sys:String>
+    <sys:String x:Key="LOCGameroomGameActivity">Activity</sys:String>
+    <sys:String x:Key="LOCGameroomGameAllSessions">See all sessions</sys:String>
+    <sys:String x:Key="LOCGameroomGameNoSessions">No sessions recorded yet. Gameroom logs them every time you play.</sys:String>
+    <sys:String x:Key="LOCGameroomGameActivitySummary">{0} · average session {1}</sys:String>
+    <sys:String x:Key="LOCGameroomGameAbout">About the game</sys:String>
+    <sys:String x:Key="LOCGameroomGameSavesTitle">Saves</sys:String>
+    <sys:String x:Key="LOCGameroomGameNoBackups">No backups of its saves yet</sys:String>
+    <sys:String x:Key="LOCGameroomGameLastBackup">Latest backup: {0}</sys:String>
+    <sys:String x:Key="LOCGameroomGameInCloud">Also stored in your account</sys:String>
+    <sys:String x:Key="LOCGameroomGameNotInCloudYet">Uploaded to your account with the next backup</sys:String>
+    <sys:String x:Key="LOCGameroomGameCloudSignedOut">Only on this PC: sign in to keep them in the cloud</sys:String>
+    <sys:String x:Key="LOCGameroomGameManage">Manage</sys:String>
+    <sys:String x:Key="LOCGameroomGameDetails">Details</sys:String>
+    <sys:String x:Key="LOCGameroomGameDeveloper">Developer</sys:String>
+    <sys:String x:Key="LOCGameroomGamePublisher">Publisher</sys:String>
+    <sys:String x:Key="LOCGameroomGameReleased">Released</sys:String>
+    <sys:String x:Key="LOCGameroomGamePlatform">Platform</sys:String>
+    <sys:String x:Key="LOCGameroomGameLibrary">Library</sys:String>
+    <sys:String x:Key="LOCGameroomGameManual">Added by you</sys:String>
+    <sys:String x:Key="LOCGameroomGameInstallSize">Size</sys:String>
+    <sys:String x:Key="LOCGameroomGameAdded">Added</sys:String>
+    <sys:String x:Key="LOCGameroomGameShowInLibrary">Show in library</sys:String>
+    <sys:String x:Key="LOCGameroomGameOpenFolder">Open game folder</sys:String>
+    <sys:String x:Key="LOCGameroomGameEdit">Edit details</sys:String>
+    <sys:String x:Key="LOCGameroomHomePlayedFor">{0} played</sys:String>
+    <sys:String x:Key="LOCGameroomHomeNew">New</sys:String>
+    <sys:String x:Key="LOCGameroomHomeGamePage">Game page</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAllGames">All games</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAlmostDone">Almost completed</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAlmostDoneHint">Only a few achievements left for 100%</sys:String>
+    <sys:String x:Key="LOCGameroomHomeAlmostDoneProgress">{0} of {1} achievements</sys:String>
+    <sys:String x:Key="LOCGameroomHomeNotPlayedTitle">Installed, never played</sys:String>
+
+    <!-- Installed games -->
+    <sys:String x:Key="LOCGameroomMenuScanInstalled">Find games installed on this PC</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesScanning">Looking for installed games…</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesAdded">{0} installed games were added to your library: {1}</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesAddedOne">An installed game was added to your library: {1}</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesMore">{0} and {1} more</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesNone">No new installed games were found on this PC. All of them are already in your library.</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesResult" xml:space="preserve">{0} games were added to your library:
+
+{1}</sys:String>
+    <sys:String x:Key="LOCGameroomInstalledGamesResultOne" xml:space="preserve">A game was added to your library:
+
+{1}</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsDetectInstalled">Add games installed on this PC automatically</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsDetectInstalledHint">Gameroom checks the applications installed on Windows and games from Steam, Riot, Battle.net, EA, HoYoPlay and Epic. It only adds the ones it recognizes as games, and a game you remove from the library isn't added again.</sys:String>
+    <sys:String x:Key="LOCGameroomSettingsScanInstalledNow">Look now</sys:String>
+    <!-- Own cloud server (Supabase) -->
+    <sys:String x:Key="LOCGameroomCloudServerTitle">Connect your server</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerText">Accounts and cloud saves run on your own Supabase project, for free. Your saves only go to your server: nobody else stores or sees them.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerUrl">Project URL (https://xxxx.supabase.co)</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerKey">Publishable key (sb_publishable_… or anon key)</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerConnect">Connect</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerChange">Change server</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerHint">No server yet? Creating one is free and takes about 5 minutes. Everything else in Gameroom works without it.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerGuide">Read the server setup guide</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerChecking">Checking the server…</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerConnected">Server connected. You can create your account now.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerInvalidUrl">That address doesn't answer like a Supabase project. Copy it from Project Settings → Data API (for example https://abcd1234.supabase.co).</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerInvalidKey">The key isn't valid for that project. Copy the publishable key (sb_publishable_…) or the anon key.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerSecretKey">That's the project's secret key: it gives full access and must never be put in the app. Use the publishable key.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudServerNotReady">The server answers, but its database isn't ready: run supabase/setup.sql in your project's SQL Editor.</sys:String>
+    <sys:String x:Key="LOCGameroomCloudNotConfigured">Connect your Supabase server in the Account section to use the cloud.</sys:String>
+</ResourceDictionary>

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Set up your own cloud server
+    url: https://github.com/Cyssel/Gameroom/blob/main/docs/SUPABASE.md
+    about: Step by step guide for accounts and cloud saves on your own Supabase project.

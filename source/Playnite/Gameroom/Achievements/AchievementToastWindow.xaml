@@ -1,0 +1,52 @@
+<Window x:Class="Playnite.Gameroom.Achievements.AchievementToastWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ShowInTaskbar="False" ShowActivated="False" Focusable="False" Topmost="True"
+        ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="Manual"
+        Left="-10000" Top="-10000" UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <!-- Room for the glow around the card -->
+    <Grid Margin="24">
+        <Border x:Name="Card" Width="380" CornerRadius="14" Padding="14" Opacity="0"
+                Background="#F2121328" BorderThickness="1.5">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="CardOffset" Y="36" />
+            </Border.RenderTransform>
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#8B5CF6" Offset="0" />
+                    <GradientStop Color="#3B82F6" Offset="1" />
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            <Border.Effect>
+                <DropShadowEffect Color="#7C4DFF" BlurRadius="26" ShadowDepth="0" Opacity="0.6" />
+            </Border.Effect>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="IconBorder" Width="64" Height="64" CornerRadius="10" VerticalAlignment="Top"
+                        Background="#2A2550">
+                    <TextBlock x:Name="IconFallback" Text="🏆" FontFamily="Segoe UI Emoji" FontSize="30"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+
+                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                    <TextBlock x:Name="HeaderText" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="11" FontWeight="SemiBold"
+                               Foreground="#B9A6FF" />
+                    <TextBlock x:Name="NameText" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="16" FontWeight="SemiBold"
+                               Foreground="White" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                    <TextBlock x:Name="DescriptionText" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="12.5"
+                               Foreground="#C4C1E0" TextWrapping="Wrap" MaxHeight="36" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                    <TextBlock x:Name="FooterText" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="11.5"
+                               Foreground="#8F8BB8" TextTrimming="CharacterEllipsis" Margin="0,6,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

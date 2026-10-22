@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyTitle>Playnite Installer Application</AssemblyTitle>
+    <Copyright>Copyright © Josef Nemec 2026</Copyright>
+    <TargetFramework>net462</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>playnite-logo-default.ico</ApplicationIcon>
+    <OutputPath>bin</OutputPath>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWpf>true</UseWpf>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="playnite-logo-default.ico" />
+    <EmbeddedResource Include="installer_mirrors.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\..\PlayniteSDK\Collections\ObservableObject.cs" Link="Shared\ObservableObject.cs" />
+    <Compile Include="..\..\PlayniteSDK\ILogger.cs" Link="Shared\ILogger.cs" />
+    <Compile Include="..\..\PlayniteSDK\RelayCommand.cs" Link="Shared\RelayCommand.cs" />
+    <Compile Include="..\..\Playnite\Common\Extensions\StringExtensions.cs" Link="Shared\StringExtensions.cs" />
+    <Compile Include="..\..\Playnite\Common\FileSystem.cs" Link="Shared\FileSystem.cs" />
+    <Compile Include="..\..\Playnite\Common\Paths.cs" Link="Shared\Paths.cs" />
+    <Compile Include="..\..\Playnite\Common\Resources.cs" Link="Shared\Resources.cs" />
+    <Compile Include="..\..\Playnite\Native\Fileapi.cs" Link="Shared\Native\Fileapi.cs" />
+    <Compile Include="..\..\Playnite\Native\Kernel32.cs" Link="Shared\Native\Kernel32.cs" />
+    <Compile Include="..\..\Playnite\Native\Ntdll.cs" Link="Shared\Native\Ntdll.cs" />
+    <Compile Include="..\..\Playnite\Native\Processthreadsapi.cs" Link="Shared\Native\Processthreadsapi.cs" />
+    <Compile Include="..\..\Playnite\Native\Shlwapi.cs" Link="Shared\Native\Shlwapi.cs" />
+    <Compile Include="..\..\Playnite\Native\Winbase.cs" Link="Shared\Native\Winbase.cs" />
+    <Compile Include="..\..\Playnite\Native\Windef.cs" Link="Shared\Native\Windef.cs" />
+    <Compile Include="..\..\Playnite\Native\Winnt.cs" Link="Shared\Native\Winnt.cs" />
+    <Compile Include="..\..\Playnite\Native\winuser.cs" Link="Shared\Native\winuser.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  
+</Project>

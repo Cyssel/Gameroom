@@ -1,0 +1,42 @@
+<UserControl x:Class="Playnite.DesktopApp.Controls.GameAchievementsSummary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- The control's own DataContext comes from the theme, the state is set on the root panel. -->
+    <StackPanel x:Name="LayoutRoot" Visibility="Collapsed">
+        <DockPanel Margin="0,15,0,5">
+            <Button DockPanel.Dock="Right" Style="{StaticResource GameroomLinkButton}" Content="{DynamicResource LOCGameroomAchievementsSeeAll}"
+                    Click="OpenAll_Click" VerticalAlignment="Center" />
+            <TextBlock Text="{DynamicResource LOCGameroomAchievementsTitle}" Style="{DynamicResource BaseTextBlockStyle}" VerticalAlignment="Center" />
+        </DockPanel>
+        <Separator Background="{DynamicResource PanelSeparatorBrush}" />
+
+        <Button Click="OpenAll_Click" Cursor="Hand" Focusable="False" Margin="0,8,0,4">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <StackPanel Background="Transparent">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding PercentText}" Style="{StaticResource GameroomText}"
+                                       Foreground="{StaticResource GameroomAccentTextBrush}" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding Summary}" Style="{StaticResource GameroomText}" />
+                        </DockPanel>
+                        <ProgressBar Style="{StaticResource GameroomProgressBar}" Height="6" Value="{Binding Percent, Mode=OneWay}" Margin="0,6,0,0" />
+                        <ItemsControl ItemsSource="{Binding Recent}" Margin="0,10,0,0" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl Width="44" Height="44" Margin="0,0,6,6" Content="{Binding}" Focusable="False"
+                                                    ContentTemplate="{StaticResource GameroomAchievementIcon}" ToolTip="{Binding Tooltip}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </StackPanel>
+</UserControl>

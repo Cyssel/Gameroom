@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>Playnite.SDK</AssemblyName>
+    <PackageId>PlayniteSDK</PackageId>
+    <Version>6.18.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://playnite.link/docs/changelog.html</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/JosefNemec/Playnite</PackageProjectUrl>
+    <PackageIcon>images\applogo.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Copyright>Copyright © Josef Nemec 2026 onwards</Copyright>
+    <Description>SDK plugin library for Playnite video game library manager.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <OutputPath>bin</OutputPath>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Gameroom" />
+    <InternalsVisibleTo Include="Gameroom.Fullscreen" />
+    <InternalsVisibleTo Include="Playnite.Tests" />
+    <InternalsVisibleTo Include="Playnite.DesktopApp.Tests" />
+    <InternalsVisibleTo Include="Playnite.FullscreenApp.Tests" />
+    <InternalsVisibleTo Include="Playnite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Playnite.DesktopApp\Themes\Desktop\Default\Images\applogo.png" Pack="true" PackagePath="images\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

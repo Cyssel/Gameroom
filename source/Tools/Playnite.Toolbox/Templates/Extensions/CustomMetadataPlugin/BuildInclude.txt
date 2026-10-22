@@ -1,0 +1,10 @@
+Localization\en_US.xaml
+CustomMetadataPlugin.csproj
+CustomMetadataPlugin.slnx
+extension.yaml
+icon.png
+_name_.cs
+_name_Provider.cs
+_name_Settings.cs
+_name_SettingsView.xaml
+_name_SettingsView.xaml.cs

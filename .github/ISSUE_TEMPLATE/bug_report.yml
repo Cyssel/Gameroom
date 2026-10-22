@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in Gameroom doesn't work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping make Gameroom better! Please check the [open issues](../issues) first, in case it's already reported.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+        3. ...
+  - type: input
+    id: version
+    attributes:
+      label: Gameroom version
+      description: Shown in the main menu → About Gameroom, or in the installer's name.
+      placeholder: "1.5.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 24H2"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Attach `gameroom.log` (and `extensions.log` if it's about an extension) from `%AppData%\Gameroom`.
+        Please remove anything personal before attaching.

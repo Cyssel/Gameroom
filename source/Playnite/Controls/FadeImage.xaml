@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Playnite.Controls.FadeImage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             Name="ControlRoot"             
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.CacheMode>
+        <BitmapCache EnableClearType="False" 
+                     RenderAtScale="1" 
+                     SnapsToDevicePixels="False" />
+    </UserControl.CacheMode>
+
+    <UserControl.Resources>
+        <Storyboard x:Key="Image1FadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Storyboard.TargetName="Image1"
+                             From="0.0" To="1.0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="Image2FadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Storyboard.TargetName="Image2"
+                             From="0.0" To="1.0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="Image1FadeOut">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Storyboard.TargetName="Image1"
+                             From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="Image2FadeOut">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Storyboard.TargetName="Image2"
+                             From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="BorderDarkenFadeOut">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                             Storyboard.TargetName="BorderDarken"
+                             FillBehavior="Stop"
+                             From="1.0" To="0.0" Duration="0:0:0.5"/>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid Name="ImageHolder">        
+        <Image x:Name="Image1"
+               HorizontalAlignment="{Binding ElementName=ControlRoot, Path=HorizontalAlignment}"
+               VerticalAlignment="{Binding ElementName=ControlRoot, Path=VerticalAlignment}"
+               RenderOptions.BitmapScalingMode="Fant" Stretch="{Binding Stretch, RelativeSource={RelativeSource AncestorType=UserControl}}"
+               OpacityMask="{Binding ImageOpacityMask, ElementName=ControlRoot}">
+        </Image>
+        <Image x:Name="Image2"
+               HorizontalAlignment="{Binding ElementName=ControlRoot, Path=HorizontalAlignment}"
+               VerticalAlignment="{Binding ElementName=ControlRoot, Path=VerticalAlignment}"
+               RenderOptions.BitmapScalingMode="Fant" Stretch="{Binding Stretch, RelativeSource={RelativeSource AncestorType=UserControl}}"
+               OpacityMask="{Binding ImageOpacityMask, ElementName=ControlRoot}">
+        </Image>
+        <Border x:Name="BorderDarken" Background="{Binding ImageDarkeningBrush, ElementName=ControlRoot}" />
+    </Grid>
+</UserControl>
