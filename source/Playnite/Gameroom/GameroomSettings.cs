@@ -65,7 +65,7 @@ namespace Playnite.Gameroom
             }
         }
 
-        private bool autoAddUnknownGames = false;
+        private bool autoAddUnknownGames = true;
         /// <summary>
         /// Adds recognized unknown games to the library without asking.
         /// </summary>
@@ -255,6 +255,20 @@ namespace Playnite.Gameroom
             set
             {
                 visualDefaultsVersion = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int detectionDefaultsVersion = 0;
+        /// <summary>
+        /// Detection defaults already applied to settings carried over from older versions.
+        /// </summary>
+        public int DetectionDefaultsVersion
+        {
+            get => detectionDefaultsVersion;
+            set
+            {
+                detectionDefaultsVersion = value;
                 OnPropertyChanged();
             }
         }

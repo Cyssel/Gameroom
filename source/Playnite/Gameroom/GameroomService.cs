@@ -98,6 +98,7 @@ namespace Playnite.Gameroom
             {
                 Instance = new GameroomService(app);
                 Instance.ApplyVisualDefaults();
+                Instance.ApplyDetectionDefaults();
                 Instance.Monitor.Start();
                 Instance.Achievements.Start();
                 Task.Run(() => Instance?.RunStartupChecks());
@@ -123,6 +124,23 @@ namespace Playnite.Gameroom
             // Background images cross fade when another game is selected instead of switching abruptly.
             app.AppSettings.BackgroundImageAnimation = true;
             Settings.VisualDefaultsVersion = 1;
+            app.AppSettings.SaveSettings();
+        }
+
+        /// <summary>
+        /// Detection defaults changed after a version, applied once to settings saved before.
+        /// </summary>
+        private void ApplyDetectionDefaults()
+        {
+            if (Settings.DetectionDefaultsVersion >= 1)
+            {
+                return;
+            }
+
+            // Since 1.5.0 recognized games are added right away, like installed games, instead of only offered in the
+            // notifications, which nobody sees while playing.
+            Settings.AutoAddUnknownGames = true;
+            Settings.DetectionDefaultsVersion = 1;
             app.AppSettings.SaveSettings();
         }
 
@@ -689,18 +707,56 @@ namespace Playnite.Gameroom
 
         private void Monitor_UnknownGameDetected(object sender, UnknownGameSession session)
         {
-            if (Settings.AutoAddUnknownGames)
+            var info = session.Info;
+            if (InstalledGames.WasRemoved(info.Executable, info.RootDirectory))
             {
-                AddUnknownGame(session);
+                // Removed from the library on purpose.
                 return;
             }
 
-            var info = session.Info;
+            // Engine or Steam files are strong evidence: the game is added right away, like installed games. Weaker
+            // evidence (a fullscreen program with game libraries) is only offered.
+            if (Settings.AutoAddUnknownGames && info.Engine != null)
+            {
+                var game = AddUnknownGame(session);
+                if (game != null)
+                {
+                    ShowDetectionPopup("LOCGameroomGameAddedHeader", game.Name, "LOCGameroomGameAddedText",
+                        game.Icon.IsNullOrEmpty() ? null : app.Database.GetFullFilePath(game.Icon));
+                }
+
+                return;
+            }
+
             app.Notifications.Add(new NotificationMessage(
                 $"gameroom_unknown_{info.Executable}",
                 string.Format(ResourceProvider.GetString("LOCGameroomUnknownGameDetected"), info.SuggestedName, info.Executable),
                 NotificationType.Info,
                 () => AskAddUnknownGame(session)));
+            ShowDetectionPopup("LOCGameroomGameDetectedHeader", info.SuggestedName, "LOCGameroomGameDetectedText", null);
+        }
+
+        /// <summary>
+        /// Card over the running game, like the achievement one: notifications in the app aren't seen while playing.
+        /// </summary>
+        private void ShowDetectionPopup(string headerKey, string name, string textKey, string iconPath)
+        {
+            if (!Settings.NotifyDetectedSessions)
+            {
+                return;
+            }
+
+            AchievementOverlay.Show(new[]
+            {
+                new AchievementToast
+                {
+                    Header = ResourceProvider.GetString(headerKey),
+                    FallbackIcon = "🎮",
+                    Name = name,
+                    Description = ResourceProvider.GetString(textKey),
+                    IconPath = iconPath
+                }
+            }, false);
         }
 
         private void AskAddUnknownGame(UnknownGameSession session)
@@ -745,6 +801,7 @@ namespace Playnite.Gameroom
                 if (existing != null)
                 {
                     Monitor.AdoptUnknownSession(info.Executable, existing);
+                    InstalledGames.CompleteDetectedGame(existing, info.Executable);
                     return existing;
                 }
 
@@ -768,6 +825,7 @@ namespace Playnite.Gameroom
 
                     app.Database.Games.Update(reinstalled);
                     Monitor.AdoptUnknownSession(info.Executable, reinstalled);
+                    InstalledGames.CompleteDetectedGame(reinstalled, info.Executable);
                     Task.Run(() => OfferRestoreIfMissing(reinstalled, true));
                     return reinstalled;
                 }
@@ -798,8 +856,14 @@ namespace Playnite.Gameroom
                 }
 
                 Monitor.AdoptUnknownSession(info.Executable, game);
+                InstalledGames.CompleteDetectedGame(game, info.Executable);
                 logger.Info($"Added detected game {game.Name} from {info.Executable}");
-                Task.Run(() => DownloadSteamMetadata(game));
+                Task.Run(() =>
+                {
+                    // Steam first, then the metadata extensions (IGDB) for what Steam doesn't have.
+                    DownloadSteamMetadata(game);
+                    DownloadMissingMetadata(new List<Game> { game });
+                });
                 app.Notifications.Add(new NotificationMessage(
                     $"gameroom_added_{game.Id}",
                     string.Format(ResourceProvider.GetString("LOCGameroomUnknownGameAdded"), game.Name),

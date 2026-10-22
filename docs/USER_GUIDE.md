@@ -122,11 +122,12 @@ When a store's extension is installed, Gameroom leaves that store's games to the
 
 ### By playing them
 
-If you start a game that isn't in your library, Gameroom recognizes it while it runs and shows a notification: *Gameroom detected a game that isn't in your library*.
-- Click the notification to add the game. The playtime of the current session is kept.
-- Choose *Not a game, don't ask again* if it isn't a game.
+Start a game that isn't in your library, from anywhere, and Gameroom recognizes it while it runs.
 
-Gameroom can also add these games automatically: see [Settings](#settings).
+- **Games with a recognizable engine** (Unity, Unreal, Godot, GameMaker, Ren'Py, RPG Maker) or Steam files are added right away, keeping the playtime of the current session. A card over the game tells you: *Added to your library*. The game gets its icon, cover and details like any other.
+- **Programs with weaker signs of being a game** (a fullscreen program that ships game libraries) are only offered. A card says *New game detected*, and the notifications in Gameroom (the bell in the library) let you **Add to library**, or choose *Not a game, don't ask again*.
+
+A game you remove from the library isn't added again. You can turn automatic adding off in [Settings](#settings).
 
 ### By hand
 
@@ -282,8 +283,8 @@ To use another server, sign out and click **Change server**.
 |---|---|
 | Detect games started outside of Gameroom and record their playtime | Recognizes library games however they're started. |
 | Show notifications when a detected session starts and ends | The *tracking your time* notifications. |
-| Recognize running games that aren't in the library | Offers to add unknown games you play. |
-| Add recognized games to the library automatically | Adds them without asking. |
+| Recognize running games that aren't in the library | Notices games you play that aren't in your library. |
+| Add recognized games to the library automatically | Adds games with a recognizable engine right away (on by default). Others are offered in the notifications. |
 | Ignore detected sessions shorter than (seconds) | Skips accidental launches (60 by default). |
 | Check running processes every (seconds) | How often running games are checked (5 by default). |
 | Executables never treated as games | One per line, for programs that look like games but aren't. |

@@ -414,6 +414,24 @@ namespace Gameroom.Tests
         }
 
         [Test]
+        public void RemembersGamesDetectedWhileRunningTest()
+        {
+            var dir = InstalledGameScannerTests.CreateUnityGame(root, "Hell Maiden", "Hell Maiden");
+            var exe = Path.Combine(dir, "Hell Maiden.exe");
+            var game = new Game("Hell Maiden") { InstallDirectory = dir, IsInstalled = true };
+            database.Games.Add(game);
+
+            importer.CompleteDetectedGame(game, exe);
+            Assert.AreEqual(1, game.PlatformIds?.Count, "Metadata providers need a platform.");
+            Assert.IsFalse(importer.WasRemoved(exe, dir));
+
+            database.Games.Remove(game);
+            importer.OnGamesRemoved(new[] { game });
+            Assert.IsTrue(importer.WasRemoved(exe, dir), "Removed on purpose: live detection doesn't add it again.");
+            Assert.IsTrue(importer.WasRemoved(exe.ToUpperInvariant(), dir), "Paths are compared without case.");
+        }
+
+        [Test]
         public void RespectsRemovedGamesTest()
         {
             var dir = InstalledGameScannerTests.CreateUnityGame(root, "Cozy Game", "CozyGame");

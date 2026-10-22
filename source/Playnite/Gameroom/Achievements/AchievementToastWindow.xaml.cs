@@ -16,6 +16,10 @@ namespace Playnite.Gameroom.Achievements
 {
     public class AchievementToast
     {
+        /// <summary>Text above the name, "Achievement unlocked" when empty. Also used for detected games.</summary>
+        public string Header { get; set; }
+        /// <summary>Shown when there's no icon image, a trophy when empty.</summary>
+        public string FallbackIcon { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string GameName { get; set; }
@@ -114,7 +118,11 @@ namespace Playnite.Gameroom.Achievements
         public AchievementToastWindow(AchievementToast toast)
         {
             InitializeComponent();
-            HeaderText.Text = ResourceProvider.GetString("LOCGameroomAchievementUnlocked").ToUpper(GameroomLocalization.Culture);
+            HeaderText.Text = (toast.Header ?? ResourceProvider.GetString("LOCGameroomAchievementUnlocked")).ToUpper(GameroomLocalization.Culture);
+            if (!toast.FallbackIcon.IsNullOrEmpty())
+            {
+                IconFallback.Text = toast.FallbackIcon;
+            }
             NameText.Text = toast.Name;
             DescriptionText.Text = toast.Description;
             DescriptionText.Visibility = toast.Description.IsNullOrWhiteSpace() ? Visibility.Collapsed : Visibility.Visible;

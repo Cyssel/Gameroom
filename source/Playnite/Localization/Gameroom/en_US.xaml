@@ -352,4 +352,9 @@ Your Playnite installation won't be modified.</sys:String>
     <sys:String x:Key="LOCGameroomCloudServerSecretKey">That's the project's secret key: it gives full access and must never be put in the app. Use the publishable key.</sys:String>
     <sys:String x:Key="LOCGameroomCloudServerNotReady">The server answers, but its database isn't ready: run supabase/setup.sql in your project's SQL Editor.</sys:String>
     <sys:String x:Key="LOCGameroomCloudNotConfigured">Connect your Supabase server in the Account section to use the cloud.</sys:String>
+    <!-- Popup for games detected while running -->
+    <sys:String x:Key="LOCGameroomGameAddedHeader">Added to your library</sys:String>
+    <sys:String x:Key="LOCGameroomGameAddedText">Gameroom is tracking your playtime and backing up your saves.</sys:String>
+    <sys:String x:Key="LOCGameroomGameDetectedHeader">New game detected</sys:String>
+    <sys:String x:Key="LOCGameroomGameDetectedText">Open the notifications in Gameroom to add it to your library.</sys:String>
 </ResourceDictionary>

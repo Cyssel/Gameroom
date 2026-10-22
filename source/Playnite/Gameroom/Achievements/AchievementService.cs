@@ -22,7 +22,12 @@ namespace Playnite.Gameroom.Achievements
     public class AchievementService : IDisposable
     {
         private static readonly ILogger logger = LogManager.GetLogger();
-        private const string iconHost = "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/";
+        // Icons of older games are on the community CDN, newer games only have them in the community assets.
+        private static readonly string[] iconHosts =
+        {
+            "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/",
+            "https://shared.akamai.steamstatic.com/community_assets/images/apps/"
+        };
         private static readonly TimeSpan schemaMaxAge = TimeSpan.FromDays(7);
         private static readonly TimeSpan failedDownloadRetry = TimeSpan.FromMinutes(10);
         private static readonly TimeSpan appSearchRetry = TimeSpan.FromDays(30);
@@ -327,7 +332,17 @@ namespace Playnite.Gameroom.Achievements
                 using (var client = new WebClient())
                 {
                     client.Headers.Add(HttpRequestHeader.UserAgent, "Gameroom");
-                    client.DownloadFile($"{iconHost}{appId}/{fileName}", temp);
+                    for (var i = 0; i < iconHosts.Length; i++)
+                    {
+                        try
+                        {
+                            client.DownloadFile($"{iconHosts[i]}{appId}/{fileName}", temp);
+                            break;
+                        }
+                        catch (WebException e) when (i < iconHosts.Length - 1 && (e.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
+                        {
+                        }
+                    }
                 }
 
                 if (File.Exists(path))

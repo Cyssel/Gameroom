@@ -76,7 +76,7 @@ You can also build Gameroom yourself from this repository.
 
 Gameroom only adds things it can recognize as games, to keep apps out of your library. Try these:
 1. Use **main menu → Update Game Library → Find games installed on this PC**. It looks again at everything, including apps it skipped before.
-2. Just **start the game**. Gameroom recognizes it while it runs and offers to add it, keeping the playtime of that session.
+2. Just **start the game**. Gameroom recognizes it while it runs and adds it, keeping the playtime of that session. A card over the game tells you when it's added.
 3. Add it by hand: **main menu → Add Game → Manually…**.
 
 ### A game I uninstalled doesn't appear. Is that right?

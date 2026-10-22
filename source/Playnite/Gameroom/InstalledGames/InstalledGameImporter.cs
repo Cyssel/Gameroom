@@ -332,6 +332,49 @@ namespace Playnite.Gameroom.InstalledGames
             }
         }
 
+        private static string RunningKey(string executable)
+        {
+            return "running:" + executable.ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Game added because it was detected while running: it gets the platform and icon installed games get, and
+        /// is remembered so it isn't added again after the user removes it.
+        /// </summary>
+        public void CompleteDetectedGame(Game game, string executable)
+        {
+            lock (scanLock)
+            {
+                if (game.PlatformIds.HasItems() != true)
+                {
+                    game.PlatformIds = new List<Guid> { GetPcPlatformId() };
+                    database.Games.Update(game);
+                }
+
+                if (game.Icon.IsNullOrEmpty())
+                {
+                    SetIcon(game, new DetectedInstalledGame { Executable = executable }, null);
+                }
+
+                Save(RunningKey(executable), game.Name, InstalledAppDecision.Added, game.Id);
+            }
+        }
+
+        /// <summary>
+        /// The user removed this game from the library after it was added, from the running executable or its folder.
+        /// </summary>
+        public bool WasRemoved(string executable, string folder)
+        {
+            var keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { RunningKey(executable) };
+            var dir = GameMatcher.NormalizeDirectory(folder);
+            if (dir != null)
+            {
+                keys.Add("folder:" + dir.ToLowerInvariant());
+            }
+
+            return gameroomDb.GetInstalledApps().Any(a => a.Decision == InstalledAppDecision.Removed && keys.Contains(a.Id));
+        }
+
         public void OnGamesRemoved(IEnumerable<Game> games)
         {
             var removed = new HashSet<Guid>(games.Select(a => a.Id));
